@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ghteacher-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ghteacher}
+      POSTGRES_USER: ${POSTGRES_USER:-ghteacher}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ghteacher_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ghteacher} -d ${POSTGRES_DB:-ghteacher}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ghteacher-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-ghteacher}
+      DATABASE_USERNAME: ${POSTGRES_USER:-ghteacher}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-ghteacher_pass}
+      JWT_SECRET: ${JWT_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      PAYSTACK_SECRET_KEY: ${PAYSTACK_SECRET_KEY}
+      PREMBLY_API_KEY: ${PREMBLY_API_KEY}
+      ETXNG_API_KEY: ${ETXNG_API_KEY}
+      CORS_ALLOWED_ORIGIN_1: ${CORS_ALLOWED_ORIGIN_1:-http://localhost:3000}
+      CORS_ALLOWED_ORIGIN_2: ${CORS_ALLOWED_ORIGIN_2:-http://localhost:8081}
+      CORS_ALLOWED_ORIGIN_3: ${CORS_ALLOWED_ORIGIN_3:-exp://localhost:8081}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+    driver: local

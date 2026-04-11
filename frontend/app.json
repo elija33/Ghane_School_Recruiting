@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "GH Teacher Recruiting",
+    "slug": "gh-teacher-recruiting",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B4F72"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ghteacher.recruiting",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need camera access to take your profile photo and record screening videos.",
+        "NSMicrophoneUsageDescription": "We need microphone access to record your screening video.",
+        "NSPhotoLibraryUsageDescription": "We need photo library access to select files for upload."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B4F72"
+      },
+      "package": "com.ghteacher.recruiting",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-document-picker",
+      "expo-notifications",
+      "expo-secure-store",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow GH Teacher Recruiting to access your microphone."
+        }
+      ]
+    ],
+    "extra": {
+      "apiBaseUrl": "http://localhost:8080"
+    }
+  }
+}
