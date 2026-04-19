@@ -12,10 +12,20 @@ import TeacherNavigator from './TeacherNavigator';
 import SchoolNavigator from './SchoolNavigator';
 import AdminNavigator from './AdminNavigator';
 
+export type AppType = 'teacher' | 'school' | 'all';
+
+interface AppNavigatorProps {
+  appType?: AppType;
+}
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export default function AppNavigator() {
+export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
   const { isAuthenticated, role } = useAppSelector((state) => state.auth);
+
+  const showTeacher = isAuthenticated && role === 'TEACHER' && (appType === 'all' || appType === 'teacher');
+  const showSchool  = isAuthenticated && role === 'SCHOOL'  && (appType === 'all' || appType === 'school');
+  const showAdmin   = isAuthenticated && role === 'ADMIN'   && appType === 'all';
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -29,9 +39,9 @@ export default function AppNavigator() {
         </>
       ) : (
         <>
-          {role === 'TEACHER' && <Stack.Screen name="TeacherApp" component={TeacherNavigator} />}
-          {role === 'SCHOOL'  && <Stack.Screen name="SchoolApp"  component={SchoolNavigator}  />}
-          {role === 'ADMIN'   && <Stack.Screen name="AdminApp"   component={AdminNavigator}   />}
+          {showTeacher && <Stack.Screen name="TeacherApp" component={TeacherNavigator} />}
+          {showSchool  && <Stack.Screen name="SchoolApp"  component={SchoolNavigator}  />}
+          {showAdmin   && <Stack.Screen name="AdminApp"   component={AdminNavigator}   />}
         </>
       )}
     </Stack.Navigator>

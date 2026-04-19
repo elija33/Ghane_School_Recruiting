@@ -8,26 +8,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
 
 import { store, persistor } from './src/store';
-import AppNavigator, { AppType } from './src/navigation/AppNavigator';
+import AppNavigator from './src/navigation/AppNavigator';
 
 SplashScreen.preventAutoHideAsync();
 
-const appType = (process.env.EXPO_PUBLIC_APP_TYPE ?? 'all') as AppType;
-const appTitle = appType === 'school' ? 'Gh_School' : 'Gh_Teacher';
-
-const schoolTheme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: '#2C3E50',
-    secondary: '#E67E22',
-    tertiary: '#27AE60',
-    surface: '#FFFFFF',
-    background: '#F5F6FA',
-  },
-};
-
-const teacherTheme = {
+const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
@@ -39,9 +24,7 @@ const teacherTheme = {
   },
 };
 
-const theme = appType === 'school' ? schoolTheme : teacherTheme;
-
-export default function App() {
+export default function TeacherApp() {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
@@ -68,9 +51,9 @@ export default function App() {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <PaperProvider theme={theme}>
-            <NavigationContainer documentTitle={{ formatter: () => appTitle }}>
+            <NavigationContainer>
               <StatusBar style="light" />
-              <AppNavigator appType={appType} />
+              <AppNavigator appType="teacher" />
             </NavigationContainer>
           </PaperProvider>
         </PersistGate>

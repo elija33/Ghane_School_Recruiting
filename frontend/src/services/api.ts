@@ -1,11 +1,28 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { ApiError } from '../types';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export const ACCESS_TOKEN_KEY  = 'ghtr_access_token';
 export const REFRESH_TOKEN_KEY = 'ghtr_refresh_token';
+
+// SecureStore is not available on web — fall back to localStorage
+async function getToken(key: string): Promise<string | null> {
+  if (Platform.OS === 'web') return localStorage.getItem(key);
+  return SecureStore.getItemAsync(key);
+}
+
+async function setToken(key: string, value: string): Promise<void> {
+  if (Platform.OS === 'web') { localStorage.setItem(key, value); return; }
+  return SecureStore.setItemAsync(key, value);
+}
+
+async function deleteToken(key: string): Promise<void> {
+  if (Platform.OS === 'web') { localStorage.removeItem(key); return; }
+  return SecureStore.deleteItemAsync(key);
+}
 
 const api: AxiosInstance = axios.create({
   baseURL: `${API_BASE_URL}/api`,
@@ -18,7 +35,7 @@ const api: AxiosInstance = axios.create({
 // Request interceptor — attach JWT
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const token = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+    const token = await getToken(ACCESS_TOKEN_KEY);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -37,7 +54,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+        const refreshToken = await getToken(REFRESH_TOKEN_KEY);
         if (!refreshToken) {
           await clearTokens();
           return Promise.reject(error);
@@ -47,7 +64,7 @@ api.interceptors.response.use(
           refreshToken,
         });
 
-        await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, data.accessToken);
+        await setToken(ACCESS_TOKEN_KEY, data.accessToken);
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         }
@@ -64,13 +81,13 @@ api.interceptors.response.use(
 );
 
 export async function saveTokens(accessToken: string, refreshToken: string): Promise<void> {
-  await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-  await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+  await setToken(ACCESS_TOKEN_KEY, accessToken);
+  await setToken(REFRESH_TOKEN_KEY, refreshToken);
 }
 
 export async function clearTokens(): Promise<void> {
-  await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-  await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+  await deleteToken(ACCESS_TOKEN_KEY);
+  await deleteToken(REFRESH_TOKEN_KEY);
 }
 
 export function extractErrorMessage(error: unknown): string {

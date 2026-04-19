@@ -16,6 +16,10 @@ import { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
+const appType = process.env.EXPO_PUBLIC_APP_TYPE ?? 'teacher';
+const isSchoolApp = appType === 'school';
+const primaryColor = isSchoolApp ? '#2C3E50' : '#1B4F72';
+
 export default function LoginScreen() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
@@ -46,10 +50,12 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.logoText}>GH</Text>
+        <View style={[styles.header, { backgroundColor: primaryColor }]}>
+          <Text style={styles.logoText}>{isSchoolApp ? '🏫' : 'GH'}</Text>
           <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to your account</Text>
+          <Text style={styles.subtitle}>
+            {isSchoolApp ? 'Sign in to your school account' : 'Sign in to your account'}
+          </Text>
         </View>
 
         <View style={styles.form}>
@@ -107,7 +113,7 @@ export default function LoginScreen() {
             disabled={loading}
             style={styles.button}
             contentStyle={{ paddingVertical: 8 }}
-            buttonColor="#1B4F72"
+            buttonColor={primaryColor}
           >
             Sign In
           </Button>
@@ -115,7 +121,7 @@ export default function LoginScreen() {
           <View style={styles.registerRow}>
             <Text>Don't have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.linkText}>Register</Text>
+              <Text style={[styles.linkText, { color: primaryColor }]}>Register</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -127,7 +133,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: '#F5F6FA' },
   header: {
-    backgroundColor: '#1B4F72',
     paddingTop: 80,
     paddingBottom: 40,
     paddingHorizontal: 24,
@@ -155,5 +160,5 @@ const styles = StyleSheet.create({
   forgotLink: { alignSelf: 'flex-end', marginBottom: 24, marginTop: 4 },
   button: { borderRadius: 12, marginBottom: 24 },
   registerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 8 },
-  linkText: { color: '#1B4F72', fontWeight: '600' },
+  linkText: { fontWeight: '600' },
 });

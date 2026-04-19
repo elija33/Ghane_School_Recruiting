@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, Chip, HelperText, Text, TextInput } from 'react-native-paper';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppDispatch, useAppSelector } from '../../store';
@@ -15,6 +15,10 @@ import { registerUser } from '../../store/slices/authSlice';
 import { RootStackParamList, UserRole } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+const appType = process.env.EXPO_PUBLIC_APP_TYPE ?? 'teacher';
+const isSchoolApp = appType === 'school';
+const primaryColor = isSchoolApp ? '#2C3E50' : '#1B4F72';
 
 export default function RegisterScreen() {
   const navigation = useNavigation<Nav>();
@@ -24,7 +28,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('TEACHER');
+  const [role, setRole] = useState<UserRole>(isSchoolApp ? 'SCHOOL' : 'TEACHER');
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -50,9 +54,15 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join the Ghana Teacher Recruiting Platform</Text>
+        <View style={[styles.header, { backgroundColor: primaryColor }]}>
+          <Text style={styles.title}>
+            {isSchoolApp ? 'School Portal' : 'Create Account'}
+          </Text>
+          <Text style={styles.subtitle}>
+            {isSchoolApp
+              ? 'Post jobs and find qualified teachers'
+              : 'Join the Ghana Teacher Recruiting Platform'}
+          </Text>
         </View>
 
         <View style={styles.form}>
@@ -62,20 +72,6 @@ export default function RegisterScreen() {
             </View>
           )}
 
-          <Text style={styles.roleLabel}>I am a:</Text>
-          <View style={styles.roleRow}>
-            {(['TEACHER', 'SCHOOL'] as UserRole[]).map((r) => (
-              <Chip
-                key={r}
-                selected={role === r}
-                onPress={() => setRole(r)}
-                style={[styles.roleChip, role === r && styles.roleChipSelected]}
-                textStyle={role === r ? styles.roleChipTextSelected : undefined}
-              >
-                {r === 'TEACHER' ? '🎓 Teacher' : '🏫 School'}
-              </Chip>
-            ))}
-          </View>
 
           <TextInput
             label="Email Address"
@@ -119,15 +115,15 @@ export default function RegisterScreen() {
             disabled={loading}
             style={styles.button}
             contentStyle={{ paddingVertical: 8 }}
-            buttonColor="#1B4F72"
+            buttonColor={primaryColor}
           >
-            Create Account
+            {isSchoolApp ? 'Create School Account' : 'Create Account'}
           </Button>
 
           <View style={styles.loginRow}>
             <Text>Already have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.linkText}>Sign In</Text>
+              <Text style={[styles.linkText, { color: primaryColor }]}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -139,7 +135,6 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: '#F5F6FA' },
   header: {
-    backgroundColor: '#1B4F72',
     paddingTop: 80,
     paddingBottom: 40,
     paddingHorizontal: 24,
@@ -160,10 +155,10 @@ const styles = StyleSheet.create({
   roleLabel: { fontSize: 15, fontWeight: '600', color: '#2C3E50', marginBottom: 12 },
   roleRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
   roleChip: { flex: 1, borderWidth: 2, borderColor: '#D5D8DC' },
-  roleChipSelected: { borderColor: '#1B4F72', backgroundColor: '#EBF5FB' },
-  roleChipTextSelected: { color: '#1B4F72', fontWeight: '600' },
+  roleChipSelected: { borderColor: primaryColor, backgroundColor: '#EBF5FB' },
+  roleChipTextSelected: { color: primaryColor, fontWeight: '600' },
   input: { marginBottom: 4 },
   button: { borderRadius: 12, marginTop: 8, marginBottom: 24 },
   loginRow: { flexDirection: 'row', justifyContent: 'center' },
-  linkText: { color: '#1B4F72', fontWeight: '600' },
+  linkText: { fontWeight: '600' },
 });
