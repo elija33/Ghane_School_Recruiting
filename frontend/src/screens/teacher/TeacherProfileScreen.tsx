@@ -113,7 +113,10 @@ export default function TeacherProfileScreen() {
   };
 
   const handlePickPhoto = () => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'web') {
+      // On web, skip the dialog — open the file picker directly
+      launchLibrary();
+    } else if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
           options: ['Cancel', 'Take a Photo', 'Choose from Library'],
@@ -125,6 +128,7 @@ export default function TeacherProfileScreen() {
         },
       );
     } else {
+      // Android
       Alert.alert('Profile Photo', 'Choose an option', [
         { text: 'Take a Photo', onPress: launchCamera },
         { text: 'Choose from Library', onPress: launchLibrary },
@@ -157,15 +161,20 @@ export default function TeacherProfileScreen() {
   };
 
   const handlePickVideo = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission Required', 'Please allow access to your media library to upload a video.');
-      return;
+    if (Platform.OS !== 'web') {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Permission Required', 'Please allow access to your media library to upload a video.');
+        return;
+      }
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Medium, // compresses on iOS
+      // videoQuality only applies on iOS — ignored on Android/web
+      videoQuality: Platform.OS === 'ios'
+        ? ImagePicker.UIImagePickerControllerQualityType.Medium
+        : undefined,
       allowsEditing: false,
     });
 
