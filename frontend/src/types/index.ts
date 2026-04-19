@@ -268,6 +268,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
+  TeacherProfile: undefined;
   TeacherApp: undefined;
   SchoolApp: undefined;
   AdminApp: undefined;

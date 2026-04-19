@@ -1,98 +1,260 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
+  ActionSheetIOS,
+  Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, Card, Text, TextInput } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { createTeacherProfile, fetchTeacherProfile, updateTeacherProfile } from '../../store/slices/teacherSlice';
-import { TeacherProfileRequest } from '../../types';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+
+const MAX_CV_MB = 10;
+const MAX_VIDEO_MB = 100;
+const MB = 1024 * 1024;
+
+const GHANA_REGIONS: { name: string; enabled: boolean }[] = [
+  { name: 'Greater Accra', enabled: true },
+  { name: 'Ashanti', enabled: true },
+  { name: 'Western', enabled: false },
+  { name: 'Central', enabled: false },
+  { name: 'Eastern', enabled: false },
+  { name: 'Northern', enabled: false },
+  { name: 'Upper East', enabled: false },
+  { name: 'Upper West', enabled: false },
+  { name: 'Volta', enabled: false },
+  { name: 'Brong-Ahafo', enabled: false },
+  { name: 'Oti', enabled: false },
+  { name: 'Ahafo', enabled: false },
+  { name: 'Bono East', enabled: false },
+  { name: 'North East', enabled: false },
+  { name: 'Savannah', enabled: false },
+  { name: 'Western North', enabled: false },
+];
+
+const SUBJECTS = [
+  'Mathematics', 'English Language', 'Science', 'Social Studies',
+  'ICT', 'French', 'Physical Education', 'Music', 'Art & Design',
+  'Religious & Moral Education', 'History', 'Geography', 'Economics',
+  'Business Studies', 'Agriculture', 'Technical Drawing',
+];
+
+interface FormData {
+  fullName: string;
+  dateOfBirth: string;
+  phone: string;
+  region: string;
+  city: string;
+  subject: string;
+  otherSubject: string;
+  experience: string;
+  bio: string;
+  idNumber: string;
+}
+
+const initialForm: FormData = {
+  fullName: '',
+  dateOfBirth: '',
+  phone: '',
+  region: '',
+  city: '',
+  subject: '',
+  otherSubject: '',
+  experience: '',
+  bio: '',
+  idNumber: '',
+};
 
 export default function TeacherProfileScreen() {
-  const navigation = useNavigation();
-  const dispatch = useAppDispatch();
-  const { profile, loading, error } = useAppSelector((s) => s.teacher);
-
-  const [editing, setEditing] = useState(!profile);
-  const [form, setForm] = useState<TeacherProfileRequest>({
-    fullName: profile?.fullName ?? '',
-    phoneNumber: profile?.phoneNumber ?? '',
-    location: profile?.location ?? '',
-    subjectSpecialization: profile?.subjectSpecialization ?? '',
-    yearsOfExperience: profile?.yearsOfExperience ?? 0,
-    bio: profile?.bio ?? '',
-    idNumber: profile?.idNumber ?? '',
-  });
+  const [form, setForm] = useState<FormData>(initialForm);
+  const [errors, setErrors] = useState<Partial<FormData>>({});
   const [saved, setSaved] = useState(false);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [cvFileName, setCvFileName] = useState<string | null>(null);
+  const [videoFileName, setVideoFileName] = useState<string | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchTeacherProfile());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (profile) {
-      setForm({
-        fullName: profile.fullName ?? '',
-        phoneNumber: profile.phoneNumber ?? '',
-        location: profile.location ?? '',
-        subjectSpecialization: profile.subjectSpecialization ?? '',
-        yearsOfExperience: profile.yearsOfExperience ?? 0,
-        bio: profile.bio ?? '',
-        idNumber: profile.idNumber ?? '',
-      });
+  const launchCamera = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission Required', 'Please allow camera access to take a photo.');
+      return;
     }
-  }, [profile]);
-
-  const handleSave = async () => {
-    const action = profile
-      ? updateTeacherProfile(form)
-      : createTeacherProfile(form);
-    const result = await dispatch(action);
-    if (!result.type.endsWith('rejected')) {
-      setSaved(true);
-      setEditing(false);
-      setTimeout(() => setSaved(false), 3000);
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets.length > 0) {
+      setPhotoUri(result.assets[0].uri);
     }
   };
 
-  const VerificationBadge = () => (
-    <View style={[
-      styles.badge,
-      { backgroundColor: profile?.verificationStatus === 'VERIFIED' ? '#EAFAF1' : '#FEF9E7' }
-    ]}>
-      <Ionicons
-        name={profile?.verificationStatus === 'VERIFIED' ? 'shield-checkmark' : 'time-outline'}
-        size={16}
-        color={profile?.verificationStatus === 'VERIFIED' ? '#27AE60' : '#F39C12'}
-      />
-      <Text style={[
-        styles.badgeText,
-        { color: profile?.verificationStatus === 'VERIFIED' ? '#27AE60' : '#F39C12' }
-      ]}>
-        {(profile?.verificationStatus ?? 'PENDING').replace('_', ' ')}
-      </Text>
+  const launchLibrary = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission Required', 'Please allow access to your photo library.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets.length > 0) {
+      setPhotoUri(result.assets[0].uri);
+    }
+  };
+
+  const handlePickPhoto = () => {
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Take a Photo', 'Choose from Library'],
+          cancelButtonIndex: 0,
+        },
+        (index) => {
+          if (index === 1) launchCamera();
+          if (index === 2) launchLibrary();
+        },
+      );
+    } else {
+      Alert.alert('Profile Photo', 'Choose an option', [
+        { text: 'Take a Photo', onPress: launchCamera },
+        { text: 'Choose from Library', onPress: launchLibrary },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    }
+  };
+
+  const handlePickCV = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'application/msword',
+             'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      copyToCacheDirectory: true,
+    });
+    if (result.canceled || result.assets.length === 0) return;
+
+    const asset = result.assets[0];
+    const sizeMB = (asset.size ?? 0) / MB;
+
+    if (sizeMB > MAX_CV_MB) {
+      Alert.alert(
+        'File Too Large',
+        `Your file is ${sizeMB.toFixed(1)} MB. Please upload a file under ${MAX_CV_MB} MB.\n\nTip: Use "Save as PDF" with compressed settings, or remove large images from your document.`,
+        [{ text: 'OK' }],
+      );
+      return;
+    }
+
+    setCvFileName(asset.name);
+  };
+
+  const handlePickVideo = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission Required', 'Please allow access to your media library to upload a video.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Medium, // compresses on iOS
+      allowsEditing: false,
+    });
+
+    if (result.canceled || result.assets.length === 0) return;
+
+    const asset = result.assets[0];
+    const sizeMB = (asset.fileSize ?? 0) / MB;
+
+    if (sizeMB > MAX_VIDEO_MB) {
+      Alert.alert(
+        'Video Too Large',
+        `Your video is ${sizeMB.toFixed(0)} MB after compression. Please upload a shorter clip (under ${MAX_VIDEO_MB} MB).`,
+        [{ text: 'OK' }],
+      );
+      return;
+    }
+
+    const name = asset.uri.split('/').pop() ?? 'intro_video';
+    setVideoFileName(name);
+  };
+
+  const set = (key: keyof FormData) => (val: string) =>
+    setForm((f) => ({ ...f, [key]: val }));
+
+  const validate = () => {
+    const e: Partial<FormData> = {};
+    if (!form.fullName.trim()) e.fullName = 'Full name is required';
+    if (!form.phone.trim()) e.phone = 'Phone number is required';
+    if (!form.region) e.region = 'Please select your region';
+    if (!form.subject) e.subject = 'Please select your subject';
+    if (!form.experience) e.experience = 'Years of experience is required';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSave = () => {
+    if (!validate()) return;
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  const SectionHeader = ({ icon, title }: { icon: string; title: string }) => (
+    <View style={styles.sectionHeader}>
+      <Ionicons name={icon as any} size={20} color="#1B4F72" />
+      <Text style={styles.sectionTitle}>{title}</Text>
     </View>
   );
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.avatarCircle}>
-            {profile?.photoUrl
-              ? null
-              : <Ionicons name="person" size={48} color="rgba(255,255,255,0.8)" />
-            }
-          </View>
-          <Text style={styles.headerName}>{profile?.fullName ?? 'Your Profile'}</Text>
-          <Text style={styles.headerEmail}>{profile?.email ?? ''}</Text>
-          {profile && <VerificationBadge />}
+          <TouchableOpacity style={styles.avatarWrapper} onPress={handlePickPhoto}>
+            <View style={styles.avatar}>
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.avatarImage} />
+              ) : (
+                <Ionicons name="person" size={48} color="rgba(255,255,255,0.7)" />
+              )}
+            </View>
+            <View style={styles.cameraBtn}>
+              <Ionicons name="camera" size={16} color="#fff" />
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Create Your Profile</Text>
+          <Text style={styles.headerSubtitle}>
+            Help schools find the right teacher — that's you!
+          </Text>
+        </View>
+
+        {/* Progress bar */}
+        <View style={styles.progressRow}>
+          {['Personal', 'Professional', 'Documents'].map((label, i) => (
+            <View key={label} style={styles.progressItem}>
+              <View style={[styles.progressDot, i === 0 && styles.progressDotActive]}>
+                <Text style={[styles.progressNum, i === 0 && styles.progressNumActive]}>
+                  {i + 1}
+                </Text>
+              </View>
+              <Text style={[styles.progressLabel, i === 0 && styles.progressLabelActive]}>
+                {label}
+              </Text>
+            </View>
+          ))}
         </View>
 
         {saved && (
@@ -102,154 +264,319 @@ export default function TeacherProfileScreen() {
           </View>
         )}
 
-        {error && (
-          <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
+        {/* ── Section 1: Personal Info ── */}
+        <View style={styles.card}>
+          <SectionHeader icon="person-outline" title="Personal Information" />
 
-        {/* Upload shortcuts */}
-        <View style={styles.uploadRow}>
-          {[
-            { label: 'Photo', icon: 'camera-outline', screen: 'TakePhoto', done: !!profile?.photoUrl },
-            { label: 'Resume', icon: 'document-attach-outline', screen: 'UploadResume', done: !!profile?.resumeUrl },
-            { label: 'Video', icon: 'videocam-outline', screen: 'RecordVideo', done: !!profile?.videoUrl },
-          ].map((item) => (
-            <Button
-              key={item.label}
-              mode="outlined"
-              icon={item.done ? 'check-circle' : item.icon}
-              onPress={() => (navigation.navigate as any)(item.screen)}
-              style={[styles.uploadBtn, item.done && styles.uploadBtnDone]}
-              textColor={item.done ? '#27AE60' : '#1B4F72'}
-            >
-              {item.label}
-            </Button>
-          ))}
+          <TextInput
+            label="Full Name *"
+            value={form.fullName}
+            onChangeText={set('fullName')}
+            mode="outlined"
+            style={styles.input}
+            error={!!errors.fullName}
+            left={<TextInput.Icon icon="account" />}
+          />
+          <HelperText type="error" visible={!!errors.fullName}>{errors.fullName}</HelperText>
+
+          <TextInput
+            label="Date of Birth"
+            value={form.dateOfBirth}
+            onChangeText={set('dateOfBirth')}
+            mode="outlined"
+            placeholder="DD/MM/YYYY"
+            style={styles.input}
+            left={<TextInput.Icon icon="calendar" />}
+          />
+
+          <TextInput
+            label="Phone Number *"
+            value={form.phone}
+            onChangeText={set('phone')}
+            mode="outlined"
+            keyboardType="phone-pad"
+            style={styles.input}
+            error={!!errors.phone}
+            left={<TextInput.Icon icon="phone" />}
+          />
+          <HelperText type="error" visible={!!errors.phone}>{errors.phone}</HelperText>
+
+          <Text style={styles.fieldLabel}>Region *</Text>
+          <View style={styles.chipGrid}>
+            {GHANA_REGIONS.map((r) => (
+              <TouchableOpacity
+                key={r.name}
+                style={[styles.chip, form.region === r.name && styles.chipSelected, !r.enabled && styles.chipDisabled]}
+                onPress={() => r.enabled && set('region')(r.name)}
+                disabled={!r.enabled}
+              >
+                <Text style={[styles.chipText, form.region === r.name && styles.chipTextSelected, !r.enabled && styles.chipTextDisabled]}>
+                  {r.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {!!errors.region && <Text style={styles.errorText}>{errors.region}</Text>}
+
+          <TextInput
+            label="City / Town"
+            value={form.city}
+            onChangeText={set('city')}
+            mode="outlined"
+            style={[styles.input, { marginTop: 12 }]}
+            left={<TextInput.Icon icon="map-marker" />}
+          />
         </View>
 
-        {/* Form */}
-        <Card style={styles.formCard}>
-          <Card.Content>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>Personal Information</Text>
-              {!editing && (
-                <Button mode="text" onPress={() => setEditing(true)} icon="pencil">
-                  Edit
-                </Button>
-              )}
-            </View>
+        {/* ── Section 2: Professional Info ── */}
+        <View style={styles.card}>
+          <SectionHeader icon="school-outline" title="Professional Information" />
 
-            {[
-              { label: 'Full Name', key: 'fullName', keyboard: 'default' as const },
-              { label: 'Phone Number', key: 'phoneNumber', keyboard: 'phone-pad' as const },
-              { label: 'Location (Region / City)', key: 'location', keyboard: 'default' as const },
-              { label: 'Subject Specialization', key: 'subjectSpecialization', keyboard: 'default' as const },
-              { label: 'Ghana Card / ID Number', key: 'idNumber', keyboard: 'default' as const },
-            ].map((field) => (
-              <TextInput
-                key={field.key}
-                label={field.label}
-                value={String((form as any)[field.key] ?? '')}
-                onChangeText={(v) => setForm({ ...form, [field.key]: v })}
-                mode="outlined"
-                disabled={!editing}
-                keyboardType={field.keyboard}
-                style={styles.input}
-              />
+          <Text style={styles.fieldLabel}>Subject Specialization *</Text>
+          <View style={styles.chipGrid}>
+            {SUBJECTS.map((s) => (
+              <TouchableOpacity
+                key={s}
+                style={[styles.chip, form.subject === s && styles.chipSelected]}
+                onPress={() => set('subject')(s)}
+              >
+                <Text style={[styles.chipText, form.subject === s && styles.chipTextSelected]}>
+                  {s}
+                </Text>
+              </TouchableOpacity>
             ))}
+          </View>
+          {!!errors.subject && <Text style={styles.errorText}>{errors.subject}</Text>}
 
-            <TextInput
-              label="Years of Experience"
-              value={String(form.yearsOfExperience ?? 0)}
-              onChangeText={(v) => setForm({ ...form, yearsOfExperience: parseInt(v) || 0 })}
-              mode="outlined"
-              disabled={!editing}
-              keyboardType="numeric"
-              style={styles.input}
-            />
+          <TextInput
+            label="Other Subject (if not listed)"
+            value={form.otherSubject}
+            onChangeText={set('otherSubject')}
+            mode="outlined"
+            style={[styles.input, { marginTop: 12 }]}
+          />
 
-            <TextInput
-              label="Bio"
-              value={form.bio ?? ''}
-              onChangeText={(v) => setForm({ ...form, bio: v })}
-              mode="outlined"
-              disabled={!editing}
-              multiline
-              numberOfLines={4}
-              style={styles.input}
-            />
+          <TextInput
+            label="Years of Experience *"
+            value={form.experience}
+            onChangeText={set('experience')}
+            mode="outlined"
+            keyboardType="numeric"
+            style={styles.input}
+            error={!!errors.experience}
+            left={<TextInput.Icon icon="briefcase" />}
+          />
+          <HelperText type="error" visible={!!errors.experience}>{errors.experience}</HelperText>
 
-            {editing && (
-              <View style={styles.actionRow}>
-                <Button
-                  mode="outlined"
-                  onPress={() => { setEditing(false); }}
-                  style={styles.cancelBtn}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  mode="contained"
-                  onPress={handleSave}
-                  loading={loading}
-                  disabled={loading}
-                  style={styles.saveBtn}
-                  buttonColor="#1B4F72"
-                >
-                  Save Profile
-                </Button>
-              </View>
-            )}
-          </Card.Content>
-        </Card>
+          <TextInput
+            label="About Yourself"
+            value={form.bio}
+            onChangeText={set('bio')}
+            mode="outlined"
+            multiline
+            numberOfLines={4}
+            style={styles.input}
+            placeholder="Tell schools a bit about yourself, your teaching style and goals..."
+          />
+        </View>
+
+        {/* ── Section 3: Documents ── */}
+        <View style={styles.card}>
+          <SectionHeader icon="document-text-outline" title="Documents & Verification" />
+
+          <TextInput
+            label="Ghana Card / National ID Number"
+            value={form.idNumber}
+            onChangeText={set('idNumber')}
+            mode="outlined"
+            style={styles.input}
+            left={<TextInput.Icon icon="card-account-details" />}
+          />
+
+          <View style={styles.uploadRow}>
+            <TouchableOpacity style={styles.uploadCard}>
+              <Ionicons name="camera-outline" size={28} color="#2E86C1" />
+              <Text style={[styles.uploadLabel, { color: '#2E86C1' }]}>Profile Photo</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.uploadCard} onPress={handlePickCV}>
+              <Ionicons name="document-attach-outline" size={28} color="#8E44AD" />
+              <Text style={[styles.uploadLabel, { color: '#8E44AD' }]}>
+                {cvFileName ?? 'Upload CV'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.uploadCard} onPress={handlePickVideo}>
+              <Ionicons name="videocam-outline" size={28} color="#E67E22" />
+              <Text style={[styles.uploadLabel, { color: '#E67E22' }]}>
+                {videoFileName ?? 'Intro Video'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Save button */}
+        <Button
+          mode="contained"
+          onPress={handleSave}
+          style={styles.saveBtn}
+          contentStyle={{ paddingVertical: 10 }}
+          buttonColor="#1B4F72"
+          icon="check-circle"
+        >
+          Save Profile
+        </Button>
+
+        <Text style={styles.hint}>
+          * Required fields. Your profile will be visible to schools once verified.
+        </Text>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F6FA' },
-  content: { paddingBottom: 40 },
+  container: { flex: 1, backgroundColor: '#F0F3F8' },
+  content: { paddingBottom: 48 },
+
+  // Header
   header: {
     backgroundColor: '#1B4F72',
     paddingTop: 56,
-    paddingBottom: 32,
+    paddingBottom: 36,
     alignItems: 'center',
+    paddingHorizontal: 24,
   },
-  avatarCircle: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  avatarWrapper: { marginBottom: 16, position: 'relative' },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.3)',
+    overflow: 'hidden',
   },
-  headerName: { color: '#FFFFFF', fontSize: 20, fontWeight: 'bold' },
-  headerEmail: { color: 'rgba(255,255,255,0.75)', fontSize: 13, marginBottom: 12 },
-  badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20, gap: 6 },
-  badgeText: { fontSize: 13, fontWeight: '600' },
-  uploadRow: { flexDirection: 'row', margin: 16, gap: 8 },
-  uploadBtn: { flex: 1, borderRadius: 8 },
-  uploadBtnDone: { borderColor: '#27AE60' },
+  avatarImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+  },
+  cameraBtn: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#F39C12',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 6 },
+  headerSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.75)', textAlign: 'center' },
+
+  // Progress
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 32,
+    backgroundColor: '#fff',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8ECF0',
+  },
+  progressItem: { alignItems: 'center', gap: 4 },
+  progressDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E8ECF0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  progressDotActive: { backgroundColor: '#1B4F72' },
+  progressNum: { fontSize: 14, fontWeight: '700', color: '#95A5A6' },
+  progressNumActive: { color: '#fff' },
+  progressLabel: { fontSize: 11, color: '#95A5A6' },
+  progressLabelActive: { color: '#1B4F72', fontWeight: '600' },
+
+  // Banners
   successBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#EAFAF1',
     margin: 16,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     gap: 8,
   },
-  successText: { color: '#27AE60', fontWeight: '500' },
-  errorBanner: { backgroundColor: '#FDEDEC', margin: 16, padding: 12, borderRadius: 8 },
-  errorText: { color: '#C0392B', fontSize: 14 },
-  formCard: { margin: 16, borderRadius: 12 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: '#2C3E50' },
-  input: { marginBottom: 12 },
-  actionRow: { flexDirection: 'row', gap: 12, marginTop: 8 },
-  cancelBtn: { flex: 1 },
-  saveBtn: { flex: 1, borderRadius: 8 },
+  successText: { color: '#27AE60', fontWeight: '600' },
+
+  // Cards
+  card: {
+    backgroundColor: '#fff',
+    margin: 16,
+    marginBottom: 8,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEF2F7',
+  },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#1B4F72' },
+
+  // Fields
+  fieldLabel: { fontSize: 14, fontWeight: '600', color: '#2C3E50', marginBottom: 10 },
+  input: { marginBottom: 4, backgroundColor: '#fff' },
+  errorText: { color: '#E74C3C', fontSize: 12, marginTop: 4, marginBottom: 8 },
+
+  // Chips
+  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#D5D8DC',
+    backgroundColor: '#F8F9FA',
+  },
+  chipSelected: { borderColor: '#1B4F72', backgroundColor: '#EBF5FB' },
+  chipDisabled: { borderColor: '#E8ECF0', backgroundColor: '#F2F3F4', opacity: 0.5 },
+  chipText: { fontSize: 13, color: '#626567' },
+  chipTextSelected: { color: '#1B4F72', fontWeight: '600' },
+  chipTextDisabled: { color: '#BDC3C7' },
+
+  // Upload
+  uploadRow: { flexDirection: 'row', gap: 10, marginTop: 16 },
+  uploadCard: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 8,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#E8ECF0',
+    borderStyle: 'dashed',
+    backgroundColor: '#FAFBFC',
+  },
+  uploadLabel: { fontSize: 12, fontWeight: '600', textAlign: 'center' },
+
+  // Save
+  saveBtn: { marginHorizontal: 16, marginTop: 16, borderRadius: 12 },
+  hint: { textAlign: 'center', fontSize: 12, color: '#95A5A6', marginTop: 16, marginHorizontal: 24 },
 });

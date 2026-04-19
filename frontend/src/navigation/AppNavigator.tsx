@@ -8,6 +8,7 @@ import OnboardingScreen from '../screens/shared/OnboardingScreen';
 import LoginScreen from '../screens/shared/LoginScreen';
 import RegisterScreen from '../screens/shared/RegisterScreen';
 import ForgotPasswordScreen from '../screens/shared/ForgotPasswordScreen';
+import TeacherProfileScreen from '../screens/teacher/TeacherProfileScreen';
 import TeacherNavigator from './TeacherNavigator';
 import SchoolNavigator from './SchoolNavigator';
 import AdminNavigator from './AdminNavigator';
@@ -31,6 +32,7 @@ export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!isAuthenticated ? (
         <>
+          <Stack.Screen name="TeacherProfile" component={TeacherProfileScreen} />
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

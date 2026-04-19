@@ -27,7 +27,6 @@ export default function RegisterScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<UserRole>(isSchoolApp ? 'SCHOOL' : 'TEACHER');
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -38,7 +37,6 @@ export default function RegisterScreen() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Invalid email address';
     if (!password) errors.password = 'Password is required';
     else if (password.length < 8) errors.password = 'Password must be at least 8 characters';
-    if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match';
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -96,17 +94,6 @@ export default function RegisterScreen() {
             error={!!fieldErrors.password}
           />
           <HelperText type="error" visible={!!fieldErrors.password}>{fieldErrors.password}</HelperText>
-
-          <TextInput
-            label="Confirm Password"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            mode="outlined"
-            secureTextEntry
-            style={styles.input}
-            error={!!fieldErrors.confirmPassword}
-          />
-          <HelperText type="error" visible={!!fieldErrors.confirmPassword}>{fieldErrors.confirmPassword}</HelperText>
 
           <Button
             mode="contained"
