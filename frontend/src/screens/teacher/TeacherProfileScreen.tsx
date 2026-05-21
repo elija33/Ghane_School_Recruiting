@@ -452,6 +452,7 @@ export default function TeacherProfileScreen() {
   const [cameraTarget, setCameraTarget] = useState<
     "avatar" | "idCard" | null
   >(null);
+  const [webChoiceTarget, setWebChoiceTarget] = useState<"idCard" | null>(null);
   const [webVideoOpen, setWebVideoOpen] = useState(false);
 
   const applyCapturedPhoto = (target: "avatar" | "idCard", uri: string) => {
@@ -529,8 +530,21 @@ export default function TeacherProfileScreen() {
   };
 
   const handlePickPhoto = () => pickImageWithChoice("avatar", "Profile Photo");
-  const handlePickIdCard = () =>
+  const handlePickIdCard = () => {
+    if (Platform.OS === "web") {
+      setWebChoiceTarget("idCard");
+      return;
+    }
     pickImageWithChoice("idCard", "Ghana Card Photo");
+  };
+
+  const handleWebChoice = (action: "camera" | "library") => {
+    const target = webChoiceTarget;
+    setWebChoiceTarget(null);
+    if (!target) return;
+    if (action === "camera") launchCamera(target);
+    else launchLibrary(target);
+  };
 
   const handlePickCV = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -664,6 +678,42 @@ export default function TeacherProfileScreen() {
           setWebVideoOpen(false);
         }}
       />
+      {webChoiceTarget && (
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalCard, { maxWidth: 360 }]}>
+            <Text style={styles.modalTitle}>Ghana Card Photo</Text>
+            <Text style={styles.modalHint}>
+              Take a clear photo of your card or upload an existing image.
+            </Text>
+            <Button
+              mode="contained"
+              onPress={() => handleWebChoice("camera")}
+              icon="camera"
+              buttonColor="#1B4F72"
+              style={styles.choiceBtn}
+              contentStyle={{ paddingVertical: 4 }}
+            >
+              Take a Photo
+            </Button>
+            <Button
+              mode="contained-tonal"
+              onPress={() => handleWebChoice("library")}
+              icon="upload"
+              style={styles.choiceBtn}
+              contentStyle={{ paddingVertical: 4 }}
+            >
+              Upload from Files
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => setWebChoiceTarget(null)}
+              style={styles.choiceBtn}
+            >
+              Cancel
+            </Button>
+          </View>
+        </View>
+      )}
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -1254,4 +1304,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   idCardRetakeText: { color: "#fff", fontSize: 12, fontWeight: "600" },
+
+  choiceBtn: { alignSelf: "stretch", marginTop: 10, borderRadius: 8 },
 });
