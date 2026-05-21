@@ -157,12 +157,14 @@ interface FormData {
   phone: string;
   region: string;
   city: string;
-  subject: string;
+  subjects: string[];
   otherSubject: string;
   experience: string;
   bio: string;
   idNumber: string;
 }
+
+type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const initialForm: FormData = {
   fullName: '',
@@ -170,7 +172,7 @@ const initialForm: FormData = {
   phone: '',
   region: '',
   city: '',
-  subject: '',
+  subjects: [],
   otherSubject: '',
   experience: '',
   bio: '',
@@ -179,7 +181,7 @@ const initialForm: FormData = {
 
 export default function TeacherProfileScreen() {
   const [form, setForm] = useState<FormData>(initialForm);
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [saved, setSaved] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string | null>(null);
@@ -310,12 +312,20 @@ export default function TeacherProfileScreen() {
   const set = (key: keyof FormData) => (val: string) =>
     setForm((f) => ({ ...f, [key]: val }));
 
+  const toggleSubject = (s: string) =>
+    setForm((f) => ({
+      ...f,
+      subjects: f.subjects.includes(s)
+        ? f.subjects.filter((x) => x !== s)
+        : [...f.subjects, s],
+    }));
+
   const validate = () => {
-    const e: Partial<FormData> = {};
+    const e: FormErrors = {};
     if (!form.fullName.trim()) e.fullName = 'Full name is required';
     if (!form.phone.trim()) e.phone = 'Phone number is required';
     if (!form.region) e.region = 'Please select your region';
-    if (!form.subject) e.subject = 'Please select your subject';
+    if (form.subjects.length === 0) e.subjects = 'Please select at least one subject';
     if (!form.experience) e.experience = 'Years of experience is required';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -460,21 +470,24 @@ export default function TeacherProfileScreen() {
         <View style={styles.card}>
           <SectionHeader icon="school-outline" title="Professional Information" />
 
-          <Text style={styles.fieldLabel}>Subject Specialization *</Text>
+          <Text style={styles.fieldLabel}>Subject Specialization * (select all that apply)</Text>
           <View style={styles.chipGrid}>
-            {SUBJECTS.map((s) => (
-              <TouchableOpacity
-                key={s}
-                style={[styles.chip, form.subject === s && styles.chipSelected]}
-                onPress={() => set('subject')(s)}
-              >
-                <Text style={[styles.chipText, form.subject === s && styles.chipTextSelected]}>
-                  {s}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {SUBJECTS.map((s) => {
+              const selected = form.subjects.includes(s);
+              return (
+                <TouchableOpacity
+                  key={s}
+                  style={[styles.chip, selected && styles.chipSelected]}
+                  onPress={() => toggleSubject(s)}
+                >
+                  <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
+                    {s}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-          {!!errors.subject && <Text style={styles.errorText}>{errors.subject}</Text>}
+          {!!errors.subjects && <Text style={styles.errorText}>{errors.subjects}</Text>}
 
           <TextInput
             label="Other Subject (if not listed)"
