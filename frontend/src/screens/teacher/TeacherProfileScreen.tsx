@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActionSheetIOS,
   Alert,
@@ -14,6 +14,112 @@ import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+
+function WebCameraModal({
+  visible,
+  onCapture,
+  onClose,
+}: {
+  visible: boolean;
+  onCapture: (dataUrl: string) => void;
+  onClose: () => void;
+}) {
+  const videoRef = useRef<any>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    setError(null);
+
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false,
+        });
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+      } catch (e: any) {
+        setError(
+          e?.name === 'NotAllowedError'
+            ? 'Camera permission denied. Please allow camera access in your browser.'
+            : e?.message ?? 'Could not access camera.',
+        );
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [visible]);
+
+  const handleCapture = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = v.videoWidth;
+    canvas.height = v.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(v, 0, 0);
+    onCapture(canvas.toDataURL('image/jpeg', 0.9));
+  };
+
+  if (!visible) return null;
+
+  return (
+    <View style={styles.modalBackdrop}>
+      <View style={styles.modalCard}>
+        <Text style={styles.modalTitle}>Take a Photo</Text>
+        {error ? (
+          <Text style={styles.modalError}>{error}</Text>
+        ) : (
+          React.createElement('video', {
+            ref: videoRef,
+            autoPlay: true,
+            playsInline: true,
+            muted: true,
+            style: {
+              width: 320,
+              height: 240,
+              borderRadius: 8,
+              background: '#000',
+              objectFit: 'cover',
+            },
+          })
+        )}
+        <View style={styles.modalActions}>
+          <Button mode="outlined" onPress={onClose} style={{ flex: 1 }}>
+            Cancel
+          </Button>
+          <Button
+            mode="contained"
+            onPress={handleCapture}
+            disabled={!!error}
+            buttonColor="#1B4F72"
+            icon="camera"
+            style={{ flex: 1 }}
+          >
+            Capture
+          </Button>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 const MAX_CV_MB = 10;
 const MAX_VIDEO_MB = 100;
@@ -78,8 +184,13 @@ export default function TeacherProfileScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
+  const [webCameraOpen, setWebCameraOpen] = useState(false);
 
   const launchCamera = async () => {
+    if (Platform.OS === 'web') {
+      setWebCameraOpen(true);
+      return;
+    }
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
       Alert.alert('Permission Required', 'Please allow camera access to take a photo.');
@@ -114,8 +225,8 @@ export default function TeacherProfileScreen() {
 
   const handlePickPhoto = () => {
     if (Platform.OS === 'web') {
-      // On web, skip the dialog — open the file picker directly
-      launchLibrary();
+      // On web, open the camera directly via getUserMedia
+      launchCamera();
     } else if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -228,6 +339,14 @@ export default function TeacherProfileScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <WebCameraModal
+        visible={webCameraOpen}
+        onClose={() => setWebCameraOpen(false)}
+        onCapture={(dataUrl) => {
+          setPhotoUri(dataUrl);
+          setWebCameraOpen(false);
+        }}
+      />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
         {/* Header */}
@@ -403,7 +522,7 @@ export default function TeacherProfileScreen() {
           />
 
           <View style={styles.uploadRow}>
-            <TouchableOpacity style={styles.uploadCard}>
+            <TouchableOpacity style={styles.uploadCard} onPress={handlePickPhoto}>
               <Ionicons name="camera-outline" size={28} color="#2E86C1" />
               <Text style={[styles.uploadLabel, { color: '#2E86C1' }]}>Profile Photo</Text>
             </TouchableOpacity>
@@ -588,4 +707,24 @@ const styles = StyleSheet.create({
   // Save
   saveBtn: { marginHorizontal: 16, marginTop: 16, borderRadius: 12 },
   hint: { textAlign: 'center', fontSize: 12, color: '#95A5A6', marginTop: 16, marginHorizontal: 24 },
+
+  // Web camera modal
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  modalCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    maxWidth: 400,
+  },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: '#1B4F72', marginBottom: 16 },
+  modalError: { color: '#E74C3C', marginVertical: 16, textAlign: 'center', maxWidth: 280 },
+  modalActions: { flexDirection: 'row', gap: 12, marginTop: 20, alignSelf: 'stretch' },
 });
