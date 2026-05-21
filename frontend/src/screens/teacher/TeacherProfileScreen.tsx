@@ -17,10 +17,12 @@ import * as ImagePicker from "expo-image-picker";
 
 function WebCameraModal({
   visible,
+  title = "Take a Photo",
   onCapture,
   onClose,
 }: {
   visible: boolean;
+  title?: string;
   onCapture: (dataUrl: string) => void;
   onClose: () => void;
 }) {
@@ -83,7 +85,7 @@ function WebCameraModal({
   return (
     <View style={styles.modalBackdrop}>
       <View style={styles.modalCard}>
-        <Text style={styles.modalTitle}>Take a Photo</Text>
+        <Text style={styles.modalTitle}>{title}</Text>
         {error ? (
           <Text style={styles.modalError}>{error}</Text>
         ) : (
@@ -444,14 +446,22 @@ export default function TeacherProfileScreen() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [saved, setSaved] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [idPhotoUri, setIdPhotoUri] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
-  const [webCameraOpen, setWebCameraOpen] = useState(false);
+  const [cameraTarget, setCameraTarget] = useState<
+    "avatar" | "idCard" | null
+  >(null);
   const [webVideoOpen, setWebVideoOpen] = useState(false);
 
-  const launchCamera = async () => {
+  const applyCapturedPhoto = (target: "avatar" | "idCard", uri: string) => {
+    if (target === "avatar") setPhotoUri(uri);
+    else setIdPhotoUri(uri);
+  };
+
+  const launchCamera = async (target: "avatar" | "idCard") => {
     if (Platform.OS === "web") {
-      setWebCameraOpen(true);
+      setCameraTarget(target);
       return;
     }
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -464,15 +474,15 @@ export default function TeacherProfileScreen() {
     }
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: target === "idCard" ? [16, 10] : [1, 1],
       quality: 0.7,
     });
     if (!result.canceled && result.assets.length > 0) {
-      setPhotoUri(result.assets[0].uri);
+      applyCapturedPhoto(target, result.assets[0].uri);
     }
   };
 
-  const launchLibrary = async () => {
+  const launchLibrary = async (target: "avatar" | "idCard") => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       Alert.alert(
@@ -484,18 +494,20 @@ export default function TeacherProfileScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: target === "idCard" ? [16, 10] : [1, 1],
       quality: 0.7,
     });
     if (!result.canceled && result.assets.length > 0) {
-      setPhotoUri(result.assets[0].uri);
+      applyCapturedPhoto(target, result.assets[0].uri);
     }
   };
 
-  const handlePickPhoto = () => {
+  const pickImageWithChoice = (
+    target: "avatar" | "idCard",
+    alertTitle: string,
+  ) => {
     if (Platform.OS === "web") {
-      // On web, open the camera directly via getUserMedia
-      launchCamera();
+      launchCamera(target);
     } else if (Platform.OS === "ios") {
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -503,19 +515,22 @@ export default function TeacherProfileScreen() {
           cancelButtonIndex: 0,
         },
         (index) => {
-          if (index === 1) launchCamera();
-          if (index === 2) launchLibrary();
+          if (index === 1) launchCamera(target);
+          if (index === 2) launchLibrary(target);
         },
       );
     } else {
-      // Android
-      Alert.alert("Profile Photo", "Choose an option", [
-        { text: "Take a Photo", onPress: launchCamera },
-        { text: "Choose from Library", onPress: launchLibrary },
+      Alert.alert(alertTitle, "Choose an option", [
+        { text: "Take a Photo", onPress: () => launchCamera(target) },
+        { text: "Choose from Library", onPress: () => launchLibrary(target) },
         { text: "Cancel", style: "cancel" },
       ]);
     }
   };
+
+  const handlePickPhoto = () => pickImageWithChoice("avatar", "Profile Photo");
+  const handlePickIdCard = () =>
+    pickImageWithChoice("idCard", "Ghana Card Photo");
 
   const handlePickCV = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -629,11 +644,16 @@ export default function TeacherProfileScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <WebCameraModal
-        visible={webCameraOpen}
-        onClose={() => setWebCameraOpen(false)}
+        visible={cameraTarget !== null}
+        title={
+          cameraTarget === "idCard"
+            ? "Take a Photo of Your Ghana Card"
+            : "Take a Photo"
+        }
+        onClose={() => setCameraTarget(null)}
         onCapture={(dataUrl) => {
-          setPhotoUri(dataUrl);
-          setWebCameraOpen(false);
+          if (cameraTarget) applyCapturedPhoto(cameraTarget, dataUrl);
+          setCameraTarget(null);
         }}
       />
       <WebVideoRecorderModal
@@ -877,6 +897,36 @@ export default function TeacherProfileScreen() {
             style={styles.input}
             left={<TextInput.Icon icon="card-account-details" />}
           />
+
+          <TouchableOpacity
+            style={styles.idCardCapture}
+            onPress={handlePickIdCard}
+            activeOpacity={0.8}
+          >
+            {idPhotoUri ? (
+              <>
+                <Image
+                  source={{ uri: idPhotoUri }}
+                  style={styles.idCardImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.idCardRetakeBadge}>
+                  <Ionicons name="refresh" size={14} color="#fff" />
+                  <Text style={styles.idCardRetakeText}>Retake</Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <Ionicons name="camera-outline" size={32} color="#1B4F72" />
+                <Text style={styles.idCardCaptureTitle}>
+                  Take Photo of Ghana Card
+                </Text>
+                <Text style={styles.idCardCaptureHint}>
+                  Place your card flat, well-lit, and fully in frame
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
 
           <View style={styles.uploadRow}>
             <TouchableOpacity
@@ -1158,4 +1208,50 @@ const styles = StyleSheet.create({
     backgroundColor: "#E74C3C",
   },
   recText: { fontWeight: "600", color: "#E74C3C", fontSize: 13 },
+
+  idCardCapture: {
+    marginTop: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#1B4F72",
+    borderStyle: "dashed",
+    backgroundColor: "#F4F8FB",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    minHeight: 140,
+    overflow: "hidden",
+    position: "relative",
+  },
+  idCardImage: {
+    width: "100%",
+    aspectRatio: 16 / 10,
+    borderRadius: 8,
+  },
+  idCardCaptureTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1B4F72",
+    marginTop: 8,
+  },
+  idCardCaptureHint: {
+    fontSize: 12,
+    color: "#7F8C8D",
+    marginTop: 4,
+    textAlign: "center",
+  },
+  idCardRetakeBadge: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(27,79,114,0.85)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  idCardRetakeText: { color: "#fff", fontSize: 12, fontWeight: "600" },
 });
