@@ -1,0 +1,280 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F0F3F8" },
+  content: { paddingBottom: 48 },
+
+  // Header
+  header: {
+    backgroundColor: "#1B4F72",
+    paddingTop: 56,
+    paddingBottom: 36,
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  avatarWrapper: { marginBottom: 16, position: "relative" },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.3)",
+    overflow: "hidden",
+  },
+  avatarImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+  },
+  cameraBtn: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#F39C12",
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 6,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.75)",
+    textAlign: "center",
+  },
+
+  // Progress
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 32,
+    backgroundColor: "#fff",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8ECF0",
+  },
+  progressItem: { alignItems: "center", gap: 4 },
+  progressDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#E8ECF0",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  progressDotActive: { backgroundColor: "#1B4F72" },
+  progressNum: { fontSize: 14, fontWeight: "700", color: "#95A5A6" },
+  progressNumActive: { color: "#fff" },
+  progressLabel: { fontSize: 11, color: "#95A5A6" },
+  progressLabelActive: { color: "#1B4F72", fontWeight: "600" },
+
+  // Banners
+  successBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EAFAF1",
+    margin: 16,
+    padding: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  successText: { color: "#27AE60", fontWeight: "600" },
+
+  // Cards
+  card: {
+    backgroundColor: "#fff",
+    margin: 16,
+    marginBottom: 8,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEF2F7",
+  },
+  sectionTitle: { fontSize: 16, fontWeight: "700", color: "#1B4F72" },
+
+  // Fields
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2C3E50",
+    marginBottom: 10,
+  },
+  input: { marginBottom: 4, backgroundColor: "#fff" },
+  errorText: { color: "#E74C3C", fontSize: 12, marginTop: 4, marginBottom: 8 },
+
+  // Chips
+  chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: "#D5D8DC",
+    backgroundColor: "#F8F9FA",
+  },
+  chipSelected: { borderColor: "#1B4F72", backgroundColor: "#EBF5FB" },
+  chipDisabled: {
+    borderColor: "#E8ECF0",
+    backgroundColor: "#F2F3F4",
+    opacity: 0.5,
+  },
+  chipText: { fontSize: 13, color: "#626567" },
+  chipTextSelected: { color: "#1B4F72", fontWeight: "600" },
+  chipTextDisabled: { color: "#BDC3C7" },
+
+  // Upload
+  uploadRow: { flexDirection: "row", gap: 10, marginTop: 16 },
+  uploadCard: {
+    flex: 1,
+    alignItems: "center",
+    gap: 8,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#E8ECF0",
+    borderStyle: "dashed",
+    backgroundColor: "#FAFBFC",
+  },
+  uploadLabel: { fontSize: 12, fontWeight: "600", textAlign: "center" },
+
+  // Save
+  saveBtn: { marginHorizontal: 16, marginTop: 16, borderRadius: 12 },
+  hint: {
+    textAlign: "center",
+    fontSize: 12,
+    color: "#95A5A6",
+    marginTop: 16,
+    marginHorizontal: 24,
+  },
+
+  // Web camera modal
+  modalBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  modalCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 24,
+    alignItems: "center",
+    maxWidth: 400,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1B4F72",
+    marginBottom: 16,
+  },
+  modalError: {
+    color: "#E74C3C",
+    marginVertical: 16,
+    textAlign: "center",
+    maxWidth: 280,
+  },
+  modalActions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 20,
+    alignSelf: "stretch",
+  },
+  modalHint: {
+    fontSize: 12,
+    color: "#7F8C8D",
+    textAlign: "center",
+    marginTop: 12,
+    maxWidth: 360,
+  },
+  recIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 12,
+  },
+  recDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#E74C3C",
+  },
+  recText: { fontWeight: "600", color: "#E74C3C", fontSize: 13 },
+
+  idCardCapture: {
+    marginTop: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#1B4F72",
+    borderStyle: "dashed",
+    backgroundColor: "#F4F8FB",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    minHeight: 140,
+    overflow: "hidden",
+    position: "relative",
+  },
+  idCardImage: {
+    width: "100%",
+    aspectRatio: 16 / 10,
+    borderRadius: 8,
+  },
+  idCardCaptureTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1B4F72",
+    marginTop: 8,
+  },
+  idCardCaptureHint: {
+    fontSize: 12,
+    color: "#7F8C8D",
+    marginTop: 4,
+    textAlign: "center",
+  },
+  idCardRetakeBadge: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(27,79,114,0.85)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  idCardRetakeText: { color: "#fff", fontSize: 12, fontWeight: "600" },
+
+  choiceBtn: { alignSelf: "stretch", marginTop: 10, borderRadius: 8 },
+  btnRow: { flexDirection: "row", paddingHorizontal: 16, marginTop: 16, gap: 10 },
+  btnFlex: { flex: 1, marginHorizontal: 0, marginTop: 0 },
+});
+
+export default styles;

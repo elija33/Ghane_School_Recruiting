@@ -1,0 +1,52 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  content: { paddingBottom: 32 },
+  header: {
+    backgroundColor: '#1B4F72',
+    paddingTop: 56,
+    paddingBottom: 28,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  greeting: { color: 'rgba(255,255,255,0.7)', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1 },
+  title: { color: '#FFFFFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 },
+  logoutBtn: { padding: 8 },
+  alertBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FDEDEC',
+    padding: 14,
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E74C3C',
+    gap: 8,
+  },
+  alertText: { flex: 1, color: '#E74C3C', fontSize: 13, fontWeight: '600' },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#2C3E50', marginHorizontal: 16, marginTop: 20, marginBottom: 12 },
+  loadingPlaceholder: { alignItems: 'center', padding: 32 },
+  loadingText: { color: '#BDC3C7', fontSize: 15 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, gap: 8 },
+  statCard: { width: '47%', borderRadius: 14, elevation: 2 },
+  statContent: { alignItems: 'center', paddingVertical: 18, gap: 6 },
+  statValue: { fontSize: 26, fontWeight: 'bold' },
+  statLabel: { fontSize: 12, color: '#7F8C8D', textAlign: 'center' },
+  actionsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12 },
+  actionCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 20,
+    alignItems: 'center',
+    gap: 10,
+    elevation: 2,
+  },
+  actionIcon: { width: 60, height: 60, borderRadius: 30, alignItems: 'center', justifyContent: 'center' },
+  actionLabel: { fontSize: 14, fontWeight: '600', color: '#2C3E50', textAlign: 'center' },
+});
+
+export default styles;

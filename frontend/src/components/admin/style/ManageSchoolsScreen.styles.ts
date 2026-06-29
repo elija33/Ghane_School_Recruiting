@@ -1,0 +1,45 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  header: {
+    backgroundColor: '#1B4F72',
+    paddingTop: 56,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  headerStats: { flexDirection: 'row', gap: 24 },
+  headerStat: { alignItems: 'center' },
+  headerStatNum: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  headerStatLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
+  searchBar: { borderRadius: 10, height: 44 },
+  errorBox: { backgroundColor: '#FDEDEC', padding: 12, marginHorizontal: 16, marginTop: 12, borderRadius: 8 },
+  errorText: { color: '#C0392B', fontSize: 13 },
+  list: { padding: 16, paddingBottom: 40 },
+  card: { marginBottom: 12, borderRadius: 14, elevation: 2 },
+  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 8 },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EBF5FB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  info: { flex: 1 },
+  schoolName: { fontSize: 15, fontWeight: '700', color: '#2C3E50', marginBottom: 4 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 },
+  locationText: { fontSize: 13, color: '#7F8C8D' },
+  contactText: { fontSize: 12, color: '#7F8C8D' },
+  tierText: { fontSize: 11, color: '#1B4F72', fontWeight: '600' },
+  subRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 },
+  subText: { fontSize: 12, color: '#7F8C8D' },
+  joinedText: { fontSize: 12, color: '#BDC3C7' },
+  empty: { alignItems: 'center', paddingTop: 80, gap: 8 },
+  emptyText: { fontSize: 16, color: '#BDC3C7', fontWeight: '500' },
+  loadMore: { margin: 16 },
+});
+
+export default styles;

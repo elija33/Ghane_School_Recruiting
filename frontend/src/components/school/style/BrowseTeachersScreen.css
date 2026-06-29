@@ -1,0 +1,133 @@
+.container {
+  flex: 1;
+  background-color: #F5F6FA;
+}
+
+.header {
+  background-color: #1B4F72;
+  padding-top: 56px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 8px;
+}
+
+.headerTitle {
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.searchBar {
+  border-radius: 10px;
+  height: 44px;
+}
+
+.list {
+  padding: 16px;
+}
+
+.card {
+  margin-bottom: 10px;
+  border-radius: 14px;
+  elevation: 2;
+}
+
+.cardContent {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarContainer {
+  position: relative;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #F0F3F4;
+  align-items: center;
+  justify-content: center;
+}
+
+.verDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  border-width: 2px;
+  border-color: #FFFFFF;
+}
+
+.info {
+  flex: 1;
+}
+
+.nameRow {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2C3E50;
+  flex: 1;
+}
+
+.subjects {
+  font-size: 13px;
+  color: #1B4F72;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.locationRow {
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.locationText {
+  font-size: 12px;
+  color: #BDC3C7;
+}
+
+.badgeRow {
+  flex-direction: row;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background-color: #EBF5FB;
+}
+
+.empty {
+  align-items: center;
+  padding-top: 80px;
+  gap: 8px;
+}
+
+.emptyText {
+  font-size: 17px;
+  color: #BDC3C7;
+  font-weight: 600;
+}
+
+.emptySub {
+  font-size: 14px;
+  color: #D5D8DC;
+}
+
+.loadMore {
+  margin: 16px;
+}

@@ -1,0 +1,134 @@
+.container {
+  flex: 1;
+  background-color: #F5F6FA;
+}
+
+.content {
+  padding: 16px;
+  padding-bottom: 40px;
+}
+
+.headerCard {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  elevation: 3;
+}
+
+.headerContent {
+  align-items: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.avatarCircle {
+  width: 88px;
+  height: 88px;
+  border-radius: 44px;
+  background-color: #1B4F72;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.schoolNameText {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2C3E50;
+  margin-bottom: 4px;
+}
+
+.locationText {
+  font-size: 14px;
+  color: #7F8C8D;
+  margin-bottom: 8px;
+}
+
+.tierBadge {
+  background-color: rgba(27, 79, 114, 0.094);
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+
+.tierText {
+  color: #1B4F72;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.expiryText {
+  font-size: 12px;
+  color: #7F8C8D;
+  margin-top: 2px;
+}
+
+.errorBox {
+  background-color: #FDEDEC;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-left-width: 4px;
+  border-left-color: #E74C3C;
+}
+
+.errorText {
+  color: #C0392B;
+  font-size: 14px;
+}
+
+.successBox {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background-color: #EAFAF1;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-left-width: 4px;
+  border-left-color: #27AE60;
+}
+
+.successText {
+  color: #1E8449;
+  font-size: 14px;
+}
+
+.formCard {
+  border-radius: 16px;
+  elevation: 2;
+}
+
+.formContent {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.formHeader {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2C3E50;
+}
+
+.input {
+  margin-bottom: 12px;
+}
+
+.actionRow {
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn {
+  border-radius: 10px;
+}

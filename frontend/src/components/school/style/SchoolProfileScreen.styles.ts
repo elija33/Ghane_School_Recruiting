@@ -1,0 +1,58 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  content: { padding: 16, paddingBottom: 40 },
+  headerCard: { borderRadius: 16, marginBottom: 16, elevation: 3 },
+  headerContent: { alignItems: 'center', paddingVertical: 24 },
+  avatarCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: '#1B4F72',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  schoolNameText: { fontSize: 20, fontWeight: 'bold', color: '#2C3E50', marginBottom: 4 },
+  locationText: { fontSize: 14, color: '#7F8C8D', marginBottom: 8 },
+  tierBadge: {
+    backgroundColor: '#1B4F72' + '18',
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 4,
+  },
+  tierText: { color: '#1B4F72', fontWeight: '600', fontSize: 13 },
+  expiryText: { fontSize: 12, color: '#7F8C8D', marginTop: 2 },
+  errorBox: {
+    backgroundColor: '#FDEDEC',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#E74C3C',
+  },
+  errorText: { color: '#C0392B', fontSize: 14 },
+  successBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#EAFAF1',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#27AE60',
+  },
+  successText: { color: '#1E8449', fontSize: 14 },
+  formCard: { borderRadius: 16, elevation: 2 },
+  formContent: { paddingVertical: 8 },
+  formHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#2C3E50' },
+  input: { marginBottom: 12 },
+  actionRow: { flexDirection: 'row', gap: 12, marginTop: 8 },
+  btn: { borderRadius: 10 },
+});
+
+export default styles;

@@ -1,0 +1,135 @@
+.container {
+  flex: 1;
+  background-color: #f5f6fa;
+}
+.header {
+  background-color: #1b4f72;
+  padding-top: 56px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 12px;
+}
+.headerTitle {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+}
+.headerStats {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+.headerStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.headerStatNum {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+}
+.headerStatLabel {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+.searchBar {
+  border-radius: 10px;
+  height: 44px;
+}
+.errorBox {
+  background-color: #fdedec;
+  padding: 12px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+.errorText {
+  color: #c0392b;
+  font-size: 13px;
+}
+.list {
+  padding: 16px;
+  padding-bottom: 40px;
+}
+.card {
+  margin-bottom: 12px;
+  border-radius: 14px;
+}
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background-color: #ebf5fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info {
+  flex: 1;
+}
+.schoolName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+.locationRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+.locationText {
+  font-size: 13px;
+  color: #7f8c8d;
+}
+.contactText {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+.tierText {
+  font-size: 11px;
+  color: #1b4f72;
+  font-weight: 600;
+}
+.subRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.subText {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+.joinedText {
+  font-size: 12px;
+  color: #bdc3c7;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  gap: 8px;
+}
+.emptyText {
+  font-size: 16px;
+  color: #bdc3c7;
+  font-weight: 500;
+}
+.loadMore {
+  margin: 16px;
+}

@@ -1,0 +1,357 @@
+.container {
+  min-height: 100vh;
+  background-color: #f0f3f8;
+}
+.content {
+  padding-bottom: 48px;
+}
+
+.header {
+  background-color: #1b4f72;
+  padding-top: 56px;
+  padding-bottom: 36px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  align-items: center;
+}
+.avatarWrapper {
+  margin-bottom: 16px;
+  position: relative;
+}
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  background-color: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+.avatarImage {
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+}
+.cameraBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #f39c12;
+  border-radius: 14px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.headerTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.headerSubtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+}
+
+.progressRow {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  background-color: #fff;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8ecf0;
+}
+.progressItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.progressDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #e8ecf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.progressDotActive {
+  background-color: #1b4f72;
+}
+.progressNum {
+  font-size: 14px;
+  font-weight: 700;
+  color: #95a5a6;
+}
+.progressNumActive {
+  color: #fff;
+}
+.progressLabel {
+  font-size: 11px;
+  color: #95a5a6;
+}
+.progressLabelActive {
+  color: #1b4f72;
+  font-weight: 600;
+}
+
+.successBanner {
+  display: flex;
+  align-items: center;
+  background-color: #eafaf1;
+  margin: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  gap: 8px;
+}
+.successText {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.card {
+  background-color: #fff;
+  margin: 16px;
+  margin-bottom: 8px;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+.sectionHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef2f7;
+}
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1b4f72;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.input {
+  margin-bottom: 4px;
+  background-color: #fff;
+}
+.errorText {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.chipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #d5d8dc;
+  background-color: #f8f9fa;
+}
+.chipSelected {
+  border-color: #1b4f72;
+  background-color: #ebf5fb;
+}
+.chipDisabled {
+  border-color: #e8ecf0;
+  background-color: #f2f3f4;
+  opacity: 0.5;
+}
+.chipText {
+  font-size: 13px;
+  color: #626567;
+}
+.chipTextSelected {
+  color: #1b4f72;
+  font-weight: 600;
+}
+.chipTextDisabled {
+  color: #bdc3c7;
+}
+
+.uploadRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.uploadCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1.5px dashed #e8ecf0;
+  background-color: #fafbfc;
+}
+.uploadLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.saveBtn {
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 16px;
+  border-radius: 12px;
+}
+.hint {
+  text-align: center;
+  font-size: 12px;
+  color: #95a5a6;
+  margin-top: 16px;
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.modalBackdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modalCard {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+}
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1b4f72;
+  margin-bottom: 16px;
+}
+.modalError {
+  color: #e74c3c;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  max-width: 280px;
+}
+.modalActions {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 20px;
+  align-self: stretch;
+}
+.modalHint {
+  font-size: 12px;
+  color: #7f8c8d;
+  text-align: center;
+  margin-top: 12px;
+  max-width: 360px;
+}
+.recIndicator {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+.recDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e74c3c;
+}
+.recText {
+  font-weight: 600;
+  color: #e74c3c;
+  font-size: 13px;
+}
+.idCardCapture {
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1.5px dashed #1b4f72;
+  background-color: #f4f8fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 16px;
+  padding-right: 16px;
+  min-height: 140px;
+  overflow: hidden;
+  position: relative;
+}
+.idCardThumbWrap {
+  position: relative;
+  width: 240px;
+  height: 150px;
+}
+.idCardImage {
+  width: 240px;
+  height: 150px;
+  border-radius: 8px;
+}
+.idCardCaptureTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b4f72;
+  margin-top: 8px;
+}
+.idCardCaptureHint {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 4px;
+  text-align: center;
+}
+.idCardRetakeBadge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba(27, 79, 114, 0.85);
+  padding: 6px 10px;
+  border-radius: 16px;
+}
+.idCardRetakeText {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+.uploadCardError {
+  border-color: #e74c3c;
+  background-color: #fdedec;
+}
+
+.choiceBtn {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+}

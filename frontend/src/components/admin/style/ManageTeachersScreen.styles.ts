@@ -1,0 +1,51 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  header: {
+    backgroundColor: '#1B4F72',
+    paddingTop: 56,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
+  searchBar: { borderRadius: 10, height: 44 },
+  filtersRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  filterChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+  },
+  filterChipActive: { backgroundColor: '#FFFFFF' },
+  filterText: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: '500' },
+  filterTextActive: { color: '#1B4F72', fontWeight: '700' },
+  errorBox: { backgroundColor: '#FDEDEC', padding: 12, marginHorizontal: 16, marginTop: 12, borderRadius: 8 },
+  errorText: { color: '#C0392B', fontSize: 13 },
+  list: { padding: 16, paddingBottom: 40 },
+  card: { marginBottom: 12, borderRadius: 14, elevation: 2 },
+  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EBF5FB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  info: { flex: 1 },
+  name: { fontSize: 15, fontWeight: '700', color: '#2C3E50' },
+  email: { fontSize: 12, color: '#7F8C8D', marginTop: 1 },
+  subject: { fontSize: 12, color: '#1B4F72', marginTop: 2, fontWeight: '500' },
+  docsRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
+  docBadge: { backgroundColor: '#F8F9FA', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  docText: { fontSize: 11, color: '#7F8C8D' },
+  actions: { flexDirection: 'row', gap: 8 },
+  actionBtn: { flex: 1, borderRadius: 8 },
+  empty: { alignItems: 'center', paddingTop: 80, gap: 8 },
+  emptyText: { fontSize: 16, color: '#BDC3C7', fontWeight: '500' },
+  loadMore: { margin: 16 },
+});
+
+export default styles;

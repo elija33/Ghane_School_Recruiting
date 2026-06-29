@@ -3,16 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import SchoolDashboardScreen from '../screens/school/SchoolDashboardScreen';
-import SchoolProfileScreen from '../screens/school/SchoolProfileScreen';
-import SubscriptionScreen from '../screens/school/SubscriptionScreen';
-import PostJobScreen from '../screens/school/PostJobScreen';
-import ManageJobsScreen from '../screens/school/ManageJobsScreen';
-import BrowseTeachersScreen from '../screens/school/BrowseTeachersScreen';
-import TeacherProfileViewScreen from '../screens/school/TeacherProfileViewScreen';
-import ApplicationsScreen from '../screens/school/ApplicationsScreen';
-import ApplicationDetailScreen from '../screens/school/ApplicationDetailScreen';
-import NotificationsScreen from '../screens/shared/NotificationsScreen';
+import SchoolDashboardScreen from '../components/school/SchoolDashboardScreen';
+import SchoolProfileScreen from '../components/school/SchoolProfileScreen';
+import SubscriptionScreen from '../components/school/SubscriptionScreen';
+import PostJobScreen from '../components/school/PostJobScreen';
+import ManageJobsScreen from '../components/school/ManageJobsScreen';
+import BrowseTeachersScreen from '../components/school/BrowseTeachersScreen';
+import TeacherProfileViewScreen from '../components/school/TeacherProfileViewScreen';
+import ApplicationsScreen from '../components/school/ApplicationsScreen';
+import ApplicationDetailScreen from '../components/school/ApplicationDetailScreen';
+import NotificationsScreen from '../components/shared/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

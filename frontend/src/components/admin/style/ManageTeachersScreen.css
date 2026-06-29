@@ -1,0 +1,145 @@
+.container {
+  flex: 1;
+  background-color: #f5f6fa;
+}
+.header {
+  background-color: #1b4f72;
+  padding-top: 56px;
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 8px;
+}
+.headerTitle {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.searchBar {
+  border-radius: 10px;
+  height: 44px;
+}
+.filtersRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.filterChip {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.filterChipActive {
+  background-color: #ffffff;
+}
+.filterText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 500;
+}
+.filterTextActive {
+  color: #1b4f72;
+  font-weight: 700;
+}
+.errorBox {
+  background-color: #fdedec;
+  padding: 12px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+.errorText {
+  color: #c0392b;
+  font-size: 13px;
+}
+.list {
+  padding: 16px;
+  padding-bottom: 40px;
+}
+.card {
+  margin-bottom: 12px;
+  border-radius: 14px;
+}
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background-color: #ebf5fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info {
+  flex: 1;
+}
+.name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+.email {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 1px;
+}
+.subject {
+  font-size: 12px;
+  color: #1b4f72;
+  margin-top: 2px;
+  font-weight: 500;
+}
+.docsRow {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.docBadge {
+  background-color: #f8f9fa;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border-radius: 6px;
+}
+.docText {
+  font-size: 11px;
+  color: #7f8c8d;
+}
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.actionBtn {
+  flex: 1;
+  border-radius: 8px;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  gap: 8px;
+}
+.emptyText {
+  font-size: 16px;
+  color: #bdc3c7;
+  font-weight: 500;
+}
+.loadMore {
+  margin: 16px;
+}

@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import AdminDashboardScreen from '../screens/admin/AdminDashboardScreen';
-import ManageTeachersScreen from '../screens/admin/ManageTeachersScreen';
-import TeacherVerificationScreen from '../screens/admin/TeacherVerificationScreen';
-import ManageSchoolsScreen from '../screens/admin/ManageSchoolsScreen';
-import NotificationsScreen from '../screens/shared/NotificationsScreen';
+import AdminDashboardScreen from '../components/admin/AdminDashboardScreen';
+import ManageTeachersScreen from '../components/admin/ManageTeachersScreen';
+import TeacherVerificationScreen from '../components/admin/TeacherVerificationScreen';
+import ManageSchoolsScreen from '../components/admin/ManageSchoolsScreen';
+import NotificationsScreen from '../components/shared/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

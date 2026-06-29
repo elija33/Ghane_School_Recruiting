@@ -1,0 +1,148 @@
+.container {
+  flex: 1;
+  background-color: #F5F6FA;
+}
+
+.header {
+  background-color: #1B4F72;
+  padding-top: 56px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.headerTitle {
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.filters {
+  flex-direction: row;
+  gap: 8px;
+}
+
+.filterChip {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.filterChipActive {
+  background-color: #FFFFFF;
+}
+
+.filterText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.filterTextActive {
+  color: #1B4F72;
+  font-weight: 700;
+}
+
+.list {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.card {
+  margin-bottom: 12px;
+  border-radius: 14px;
+  elevation: 2;
+}
+
+.cardHeader {
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.jobTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 2px;
+}
+
+.jobMeta {
+  font-size: 13px;
+  color: #7F8C8D;
+}
+
+.statusChip {
+  margin-top: 2px;
+}
+
+.metaRow {
+  flex-direction: row;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.metaItem {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.metaText {
+  font-size: 12px;
+  color: #BDC3C7;
+}
+
+.questionsNote {
+  font-size: 12px;
+  color: #7F8C8D;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.actions {
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.actionBtn {
+  border-radius: 8px;
+  flex: 1;
+}
+
+.empty {
+  align-items: center;
+  padding-top: 80px;
+  gap: 8px;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #BDC3C7;
+}
+
+.emptySub {
+  font-size: 14px;
+  color: #D5D8DC;
+  text-align: center;
+}
+
+.fab {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #1B4F72;
+  align-items: center;
+  justify-content: center;
+  elevation: 6;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.3);
+}

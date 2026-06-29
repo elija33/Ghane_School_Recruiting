@@ -1,0 +1,50 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  content: { padding: 16, paddingBottom: 40 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  errorText: { color: '#E74C3C', fontSize: 15, textAlign: 'center' },
+  section: { borderRadius: 14, marginBottom: 16, elevation: 2 },
+  jobTitle: { fontSize: 16, fontWeight: '700', color: '#2C3E50', marginBottom: 12 },
+  teacherRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EBF5FB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  teacherName: { fontSize: 15, fontWeight: '700', color: '#2C3E50' },
+  teacherEmail: { fontSize: 13, color: '#7F8C8D', marginTop: 2 },
+  dateRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  dateText: { fontSize: 12, color: '#BDC3C7' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#2C3E50', marginBottom: 12 },
+  errorBox: {
+    backgroundColor: '#FDEDEC',
+    borderRadius: 6,
+    padding: 10,
+    marginBottom: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: '#E74C3C',
+  },
+  errorMsg: { color: '#C0392B', fontSize: 13 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  currentStatus: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14 },
+  currentStatusText: { fontSize: 14, fontWeight: '700' },
+  statusNote: { fontSize: 12, color: '#7F8C8D', fontStyle: 'italic', marginTop: 4 },
+  divider: { marginVertical: 12 },
+  questionText: { fontSize: 14, fontWeight: '600', color: '#2C3E50', marginBottom: 8 },
+  answerBox: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+    padding: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: '#1B4F72',
+  },
+  answerText: { fontSize: 14, color: '#555', lineHeight: 20 },
+  profileBtn: { borderRadius: 12, marginTop: 4 },
+});
+
+export default styles;

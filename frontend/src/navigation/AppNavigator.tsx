@@ -3,12 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAppSelector } from '../store';
 import { RootStackParamList } from '../types';
 
-import SplashScreen from '../screens/shared/SplashScreen';
-import OnboardingScreen from '../screens/shared/OnboardingScreen';
-import LoginScreen from '../screens/shared/LoginScreen';
-import RegisterScreen from '../screens/shared/RegisterScreen';
-import ForgotPasswordScreen from '../screens/shared/ForgotPasswordScreen';
-import TeacherProfileScreen from '../screens/teacher/TeacherProfileScreen';
+import SplashScreen from '../components/shared/SplashScreen';
+import OnboardingScreen from '../components/shared/OnboardingScreen';
+import LoginScreen from '../components/shared/LoginScreen';
+import RegisterScreen from '../components/shared/RegisterScreen';
+import ForgotPasswordScreen from '../components/shared/ForgotPasswordScreen';
+import TeacherProfileScreen from '../components/teacher/TeacherProfileScreen';
 import TeacherNavigator from './TeacherNavigator';
 import SchoolNavigator from './SchoolNavigator';
 import AdminNavigator from './AdminNavigator';

@@ -1,0 +1,71 @@
+.container {
+  flex: 1;
+  background-color: #1b4f72;
+}
+.slide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+.iconContainer {
+  width: 180px;
+  height: 180px;
+  border-radius: 90px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.description {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  line-height: 24px;
+}
+.footer {
+  background-color: #ffffff;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dots {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 24px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #d5d8dc;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.dotActive {
+  background-color: #1b4f72;
+  width: 24px;
+}
+.button {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.skip {
+  color: #7f8c8d;
+  font-size: 15px;
+}

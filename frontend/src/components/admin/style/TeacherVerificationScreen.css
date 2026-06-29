@@ -1,0 +1,207 @@
+.container {
+  flex: 1;
+  background-color: #f5f6fa;
+}
+.content {
+  padding: 16px;
+  padding-bottom: 40px;
+}
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.loadingText {
+  color: #7f8c8d;
+  font-size: 16px;
+}
+.errorBox {
+  background-color: #fdedec;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid #e74c3c;
+}
+.errorText {
+  color: #c0392b;
+  font-size: 14px;
+}
+.section {
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+.teacherRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  background-color: #ebf5fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.teacherName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+.teacherEmail {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+.teacherSubject {
+  font-size: 13px;
+  color: #1b4f72;
+  margin-top: 2px;
+  font-weight: 500;
+}
+.verBadge {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 12px;
+}
+.verBadgeText {
+  font-size: 12px;
+  font-weight: 700;
+}
+.docsRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.docItem {
+  font-size: 13px;
+  color: #2c3e50;
+}
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+.sectionNote {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.triggerRow {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.triggerBtn {
+  flex: 1;
+  border-radius: 10px;
+}
+.noVerifications {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  gap: 8px;
+}
+.noVerText {
+  font-size: 14px;
+  color: #bdc3c7;
+}
+.divider {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.verRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+}
+.verType {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+.verMeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
+.verStatus {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+.verDate {
+  font-size: 12px;
+  color: #bdc3c7;
+}
+.verNotes {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-style: italic;
+  margin-top: 4px;
+}
+.resultBadge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 10px;
+}
+.resultText {
+  font-size: 11px;
+  font-weight: 700;
+}
+.manualOverride {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 8px;
+  gap: 8px;
+}
+.overrideLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+.resultOptions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.notesInput {
+  margin-top: 4px;
+}
+.submitOverrideBtn {
+  border-radius: 8px;
+  margin-top: 4px;
+}
+.adminActions {
+  gap: 10px;
+}
+.adminBtn {
+  border-radius: 10px;
+}

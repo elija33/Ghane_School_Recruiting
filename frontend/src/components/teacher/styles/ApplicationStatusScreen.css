@@ -1,0 +1,104 @@
+/* Converted from React Native StyleSheet */
+.container {
+  min-height: 100vh;
+  background-color: #f5f6fa;
+}
+.header {
+  background-color: #1b4f72;
+  padding-top: 56px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.headerTitle {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+}
+.headerSub {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  margin-top: 4px;
+}
+.list {
+  padding: 16px;
+}
+.card {
+  margin-bottom: 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.jobTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2px;
+}
+.schoolName {
+  font-size: 13px;
+  color: #1b4f72;
+  font-weight: 500;
+}
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 16px;
+}
+.statusText {
+  font-size: 12px;
+  font-weight: 600;
+}
+.statusBadge.status-SUBMITTED { background-color: #3498DB18; }
+.statusText.status-SUBMITTED { color: #3498DB; }
+.statusBadge.status-UNDER_REVIEW { background-color: #F39C1218; }
+.statusText.status-UNDER_REVIEW { color: #F39C12; }
+.statusBadge.status-SHORTLISTED { background-color: #8E44AD18; }
+.statusText.status-SHORTLISTED { color: #8E44AD; }
+.statusBadge.status-INTERVIEW_REQUESTED { background-color: #1ABC9C18; }
+.statusText.status-INTERVIEW_REQUESTED { color: #1ABC9C; }
+.statusBadge.status-REJECTED { background-color: #E74C3C18; }
+.statusText.status-REJECTED { color: #E74C3C; }
+.statusBadge.status-HIRED { background-color: #27AE6018; }
+.statusText.status-HIRED { color: #27AE60; }
+
+.flex1 { flex: 1; }
+.dateRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dateText {
+  font-size: 12px;
+  color: #bdc3c7;
+}
+.answersNote {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 6px;
+  font-style: italic;
+}
+.empty {
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+  gap: 12px;
+  flex-direction: column;
+}
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #bdc3c7;
+}
+.emptySub {
+  font-size: 14px;
+  color: #d5d8dc;
+  text-align: center;
+}

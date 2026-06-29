@@ -1,0 +1,159 @@
+.container {
+  flex: 1;
+  background-color: #F5F6FA;
+}
+
+.content {
+  padding-bottom: 32px;
+}
+
+.header {
+  background-color: #1B4F72;
+  padding-top: 56px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.greeting {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+}
+
+.schoolName {
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.logoutBtn {
+  padding: 8px;
+}
+
+.subBanner {
+  flex-direction: row;
+  align-items: center;
+  background-color: #FEF9E7;
+  padding: 14px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 16px;
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: #F39C12;
+  gap: 8px;
+}
+
+.subBannerText {
+  flex: 1;
+  font-size: 13px;
+  color: #E67E22;
+  font-weight: 500;
+}
+
+.statsGrid {
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 12px;
+  gap: 8px;
+}
+
+.statCard {
+  width: 47%;
+  border-radius: 12px;
+  elevation: 2;
+}
+
+.statContent {
+  align-items: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  gap: 6px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #7F8C8D;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.actionsGrid {
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 12px;
+  padding-right: 12px;
+  gap: 12px;
+}
+
+.actionCard {
+  width: 46%;
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  padding: 16px;
+  align-items: center;
+  gap: 8px;
+  elevation: 2;
+}
+
+.actionIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 27px;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2C3E50;
+  text-align: center;
+}
+
+.jobCard {
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+}
+
+.jobContent {
+  flex-direction: row;
+  align-items: center;
+}
+
+.jobTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.jobMeta {
+  font-size: 12px;
+  color: #7F8C8D;
+  margin-top: 2px;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}

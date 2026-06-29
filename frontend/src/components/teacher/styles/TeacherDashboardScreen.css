@@ -1,0 +1,132 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f6fa;
+}
+.content {
+  padding-bottom: 32px;
+}
+.header {
+  background-color: #1b4f72;
+  padding-top: 56px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.greeting {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+}
+.name {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+.verificationCard {
+  margin: 16px;
+  border-radius: 12px;
+}
+.verificationContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.verificationTitle {
+  font-size: 13px;
+  color: #7f8c8d;
+}
+.verificationStatus {
+  font-size: 16px;
+  font-weight: 700;
+}
+.statsRow {
+  display: flex;
+  flex-direction: row;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-bottom: 8px;
+}
+.statCard {
+  flex: 1;
+  margin: 4px;
+  border-radius: 10px;
+}
+.statContent {
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.statValue {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+.statLabel {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+.sectionTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+.actionsGrid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.actionCard {
+  width: 30%;
+  margin: 1.5%;
+  border-radius: 12px;
+}
+.actionContent {
+  align-items: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.actionLabel {
+  font-size: 11px;
+  color: #2c3e50;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+.appCard {
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+.appJobTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+.appSchool {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+.statusChip {
+  align-self: flex-start;
+}

@@ -1,0 +1,92 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f6fa;
+}
+.header {
+  background-color: #1b4f72;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.headerTitle {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+}
+.headerSub {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+}
+.body {
+  flex: 1;
+  padding: 24px;
+}
+.errorBox {
+  background-color: #fdedec;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid #e74c3c;
+}
+.errorText {
+  color: #c0392b;
+  font-size: 14px;
+}
+.dropZone {
+  border-radius: 16px;
+  border: 2px dashed #d5d8dc;
+  margin-bottom: 24px;
+}
+.centeredContent {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  gap: 12px;
+}
+.dropText {
+  font-size: 17px;
+  font-weight: 600;
+  color: #7f8c8d;
+}
+.dropSub {
+  font-size: 13px;
+  color: #bdc3c7;
+}
+.fileName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1b4f72;
+  text-align: center;
+}
+.fileSize {
+  font-size: 13px;
+  color: #7f8c8d;
+}
+.progressContainer {
+  margin-bottom: 24px;
+}
+.progressLabel {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.buttonRow {
+  display: flex;
+  gap: 12px;
+}
+.successCard {
+  border-radius: 16px;
+  border: 2px solid #27ae60;
+}
+.successText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #27ae60;
+  text-align: center;
+}

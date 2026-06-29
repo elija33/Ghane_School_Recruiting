@@ -1,0 +1,45 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  content: { paddingBottom: 40 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  loadingText: { color: '#7F8C8D', fontSize: 16 },
+  errorText: { color: '#E74C3C', fontSize: 15, textAlign: 'center', marginTop: 12 },
+  profileHeader: {
+    backgroundColor: '#1B4F72',
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 32,
+    paddingHorizontal: 24,
+    gap: 8,
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  name: { fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' },
+  subject: { fontSize: 15, color: 'rgba(255,255,255,0.8)' },
+  verBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 14 },
+  verLabel: { fontSize: 13, fontWeight: '600' },
+  statsRow: { flexDirection: 'row', padding: 12, gap: 8 },
+  statCard: { flex: 1, borderRadius: 12, elevation: 2 },
+  statContent: { alignItems: 'center', paddingVertical: 12, gap: 4 },
+  statValue: { fontSize: 13, fontWeight: '700', color: '#2C3E50', textAlign: 'center' },
+  statLabel: { fontSize: 11, color: '#7F8C8D' },
+  section: { margin: 16, marginBottom: 0, borderRadius: 14, elevation: 2 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#2C3E50', marginBottom: 12 },
+  bodyText: { fontSize: 14, color: '#555', lineHeight: 22 },
+  detailRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  detailLabel: { fontSize: 12, color: '#7F8C8D', marginBottom: 2 },
+  detailValue: { fontSize: 14, color: '#2C3E50', fontWeight: '500' },
+  docsRow: { flexDirection: 'row', gap: 8 },
+  docBtn: { flex: 1, borderRadius: 8 },
+});
+
+export default styles;

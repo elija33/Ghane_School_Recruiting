@@ -1,0 +1,50 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  header: {
+    backgroundColor: '#1B4F72',
+    paddingTop: 56,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
+  searchBar: { borderRadius: 10, height: 44 },
+  list: { padding: 16 },
+  card: { marginBottom: 10, borderRadius: 14, elevation: 2 },
+  cardContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  avatarContainer: { position: 'relative' },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F0F3F4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verDot: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  info: { flex: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 },
+  name: { fontSize: 15, fontWeight: '700', color: '#2C3E50', flex: 1 },
+  subjects: { fontSize: 13, color: '#1B4F72', fontWeight: '500', marginBottom: 4 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginBottom: 6 },
+  locationText: { fontSize: 12, color: '#BDC3C7' },
+  badgeRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  badge: { backgroundColor: '#EBF5FB' },
+  empty: { alignItems: 'center', paddingTop: 80, gap: 8 },
+  emptyText: { fontSize: 17, color: '#BDC3C7', fontWeight: '600' },
+  emptySub: { fontSize: 14, color: '#D5D8DC' },
+  loadMore: { margin: 16 },
+});
+
+export default styles;
