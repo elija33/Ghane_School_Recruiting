@@ -9,6 +9,8 @@ import LoginScreen from '../components/shared/LoginScreen';
 import RegisterScreen from '../components/shared/RegisterScreen';
 import ForgotPasswordScreen from '../components/shared/ForgotPasswordScreen';
 import TeacherProfileScreen from '../components/teacher/TeacherProfileScreen';
+import ProfessionalScreen from '../components/teacher/ProfessionalScreen';
+import DocumentReviewScreen from '../components/teacher/DocumentReviewScreen';
 import TeacherNavigator from './TeacherNavigator';
 import SchoolNavigator from './SchoolNavigator';
 import AdminNavigator from './AdminNavigator';
@@ -33,6 +35,8 @@ export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
       {!isAuthenticated ? (
         <>
           <Stack.Screen name="TeacherProfile" component={TeacherProfileScreen} />
+          <Stack.Screen name="TeacherProfessional" component={ProfessionalScreen} />
+          <Stack.Screen name="TeacherDocuments" component={DocumentReviewScreen} />
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

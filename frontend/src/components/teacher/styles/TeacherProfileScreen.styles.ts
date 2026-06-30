@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFBFC",
   },
   uploadLabel: { fontSize: 12, fontWeight: "600", textAlign: "center" },
+  uploadCardError: { borderColor: "#E74C3C", backgroundColor: "#FDF2F2" },
 
   // Save
   saveBtn: { marginHorizontal: 16, marginTop: 16, borderRadius: 12 },
@@ -237,13 +238,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 20,
     paddingHorizontal: 16,
-    minHeight: 140,
+    height: 180,
     overflow: "hidden",
     position: "relative",
   },
   idCardImage: {
     width: "100%",
-    aspectRatio: 16 / 10,
+    height: 180,
     borderRadius: 8,
   },
   idCardCaptureTitle: {
