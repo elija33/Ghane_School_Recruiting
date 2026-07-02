@@ -39,7 +39,7 @@ function fromInputValue(ymd: string): string {
 }
 
 interface Props {
-  form: Pick<FormData, 'fullName' | 'dateOfBirth' | 'phone' | 'region' | 'city'>;
+  form: Pick<FormData, 'fullName' | 'dateOfBirth' | 'phone' | 'email' | 'region' | 'city'>;
   errors: FormErrors;
   onChange: (key: keyof FormData) => (val: string) => void;
 }
@@ -102,6 +102,11 @@ export default function PersonalInfoSection({ form, errors, onChange }: Props) {
         mode="outlined" keyboardType="phone-pad" style={styles.input} error={!!errors.phone}
         left={<TextInput.Icon icon="phone" />} />
       <HelperText type="error" visible={!!errors.phone}>{errors.phone}</HelperText>
+
+      <TextInput label="Email Address" value={form.email} onChangeText={onChange('email')}
+        mode="outlined" keyboardType="email-address" autoCapitalize="none" style={styles.input}
+        error={!!errors.email} left={<TextInput.Icon icon="email-outline" />} />
+      <HelperText type="error" visible={!!errors.email}>{errors.email}</HelperText>
 
       <Text style={styles.fieldLabel}>Region *</Text>
       <View style={styles.chipGrid}>

@@ -19,6 +19,7 @@ import PersonalInfoSection from './profile/PersonalInfoSection';
 import ProfessionalInfoSection from './profile/ProfessionalInfoSection';
 import DocumentsSection from './profile/DocumentsSection';
 import { FormData, FormErrors, initialForm } from './profile/types';
+import { profileStore } from './profileStore';
 
 const MAX_CV_MB = 10;
 const MAX_VIDEO_MB = 100;
@@ -34,6 +35,7 @@ export default function TeacherProfileScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [idPhotoUri, setIdPhotoUri] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string | null>(null);
+  const [cvUri, setCvUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [cameraTarget, setCameraTarget] = useState<'avatar' | 'idCard' | null>(null);
   const [webChoiceTarget, setWebChoiceTarget] = useState<'idCard' | null>(null);
@@ -104,6 +106,7 @@ export default function TeacherProfileScreen() {
       return;
     }
     setCvFileName(asset.name);
+    setCvUri(asset.uri);
   };
 
   const handlePickVideo = async () => {
@@ -153,6 +156,11 @@ export default function TeacherProfileScreen() {
     if (!form.region) e.region = 'Please select your region';
     if (form.subjects.length === 0) e.subjects = 'Please select at least one subject';
     if (!form.experience.trim()) e.experience = 'Years of experience is required';
+    if (!form.bio.trim()) e.bio = 'Please write something about yourself';
+    if (!photoUri) e.photoUri = 'Please add a profile photo';
+    if (!idPhotoUri) e.idPhotoUri = 'Please take a photo of your Ghana Card';
+    if (!cvFileName) e.cvFileName = 'Please upload your CV / Resume';
+    if (!videoFileName) e.videoFileName = 'Please record or upload a video about yourself';
     return e;
   };
 
@@ -165,7 +173,12 @@ export default function TeacherProfileScreen() {
   };
 
   const handleSaveAndNext = () => {
-    navigation.navigate('TeacherProfessional', { personalData: form });
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length > 0) return;
+    const personalData = { ...form, cvFileName, cvUri, videoFileName, idPhotoUri, photoUri };
+    profileStore.setPersonalData(personalData);
+    navigation.navigate('TeacherProfessional', { personalData });
   };
 
   return (
@@ -196,7 +209,7 @@ export default function TeacherProfileScreen() {
 
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <ProfileHeader photoUri={photoUri} onPickPhoto={handlePickPhoto} />
-        <ProfileProgress />
+        <ProfileProgress onValidate={() => { const e = validate(); setErrors(e); return Object.keys(e).length === 0; }} />
 
         {saved && (
           <View style={styles.successBanner}>
@@ -210,8 +223,10 @@ export default function TeacherProfileScreen() {
         <DocumentsSection
           form={form}
           idPhotoUri={idPhotoUri}
+          photoUri={photoUri}
           cvFileName={cvFileName}
           videoFileName={videoFileName}
+          errors={errors}
           onChange={onChange}
           onPickIdCard={handlePickIdCard}
           onPickPhoto={handlePickPhoto}

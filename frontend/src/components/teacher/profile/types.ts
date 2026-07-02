@@ -2,6 +2,7 @@ export interface FormData {
   fullName: string;
   dateOfBirth: string;
   phone: string;
+  email: string;
   region: string;
   city: string;
   subjects: string[];
@@ -11,12 +12,13 @@ export interface FormData {
   idNumber: string;
 }
 
-export type FormErrors = Partial<Record<keyof FormData, string>>;
+export type FormErrors = Partial<Record<keyof FormData | 'cvFileName' | 'idPhotoUri' | 'videoFileName' | 'photoUri', string>>;
 
 export const initialForm: FormData = {
   fullName: '',
   dateOfBirth: '',
   phone: '',
+  email: '',
   region: '',
   city: '',
   subjects: [],

@@ -123,7 +123,7 @@ export default function WebVideoRecorderModal({ visible, onSave, onClose }: Prop
           </View>
         )}
         {stage === 'idle' && !error && (
-          <Text style={styles.modalHint}>Tip: Introduce yourself, your teaching experience, and why you'd be a great fit. Keep it under {MAX_RECORD_SECONDS}s.</Text>
+          <Text style={[styles.modalHint, { color: '#E74C3C' }]}>Tip: Introduce yourself, your teaching experience, and why you'd be a great fit. Keep it under {MAX_RECORD_SECONDS}s.</Text>
         )}
         <View style={styles.modalActions}>
           {stage === 'idle' && (

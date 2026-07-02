@@ -1,121 +1,50 @@
-import React, { useState } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import * as DocumentPicker from 'expo-document-picker';
-import * as ImagePicker from 'expo-image-picker';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types';
 
 import styles from './styles/TeacherProfileScreen.styles';
 import SaveProfileButton from '../SaveProfileButton';
 import ProfileProgress from './profile/ProfileProgress';
-import WebCameraModal from './profile/WebCameraModal';
-import WebVideoRecorderModal from './profile/WebVideoRecorderModal';
+import { profileStore } from './profileStore';
 
-const MAX_CV_MB = 10;
-const MAX_VIDEO_MB = 100;
-const MB = 1024 * 1024;
+type Route = RouteProp<RootStackParamList, 'TeacherDocuments'>;
+
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  if (!value) return null;
+  return (
+    <View style={{ flexDirection: 'row', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F0F3F8' }}>
+      <Text style={{ flex: 1, fontSize: 13, color: '#7F8C8D' }}>{label}</Text>
+      <Text style={{ flex: 2, fontSize: 13, color: '#2C3E50', fontWeight: '500' }}>{value}</Text>
+    </View>
+  );
+}
 
 export default function DocumentReviewScreen() {
-  const [idNumber, setIdNumber] = useState('');
-  const [idPhotoUri, setIdPhotoUri] = useState<string | null>(null);
-  const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null);
-  const [cvFileName, setCvFileName] = useState<string | null>(null);
-  const [videoFileName, setVideoFileName] = useState<string | null>(null);
-  const [cameraTarget, setCameraTarget] = useState<'profile' | 'idCard' | null>(null);
-  const [webChoiceTarget, setWebChoiceTarget] = useState<'idCard' | null>(null);
-  const [webVideoOpen, setWebVideoOpen] = useState(false);
+  const route = useRoute<Route>();
+  const routePersonal = route.params?.personalData;
+  const personalData = (routePersonal && Object.keys(routePersonal).length > 0)
+    ? routePersonal
+    : profileStore.getPersonalData();
+
+  const routeRefs = route.params?.references;
+  const references = (routeRefs && routeRefs.length > 0)
+    ? routeRefs
+    : profileStore.getRefs();
+
   const [saved, setSaved] = useState(false);
+  const [pdfUri, setPdfUri] = useState<string | null>(null);
+  const slideAnim = useRef(new Animated.Value(-900)).current;
 
-  const applyCapturedPhoto = (target: 'profile' | 'idCard', uri: string) => {
-    if (target === 'profile') setProfilePhotoUri(uri);
-    else setIdPhotoUri(uri);
+  const openDrawer = (uri: string) => {
+    setPdfUri(uri);
+    Animated.spring(slideAnim, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start();
   };
 
-  const launchCamera = async (target: 'profile' | 'idCard') => {
-    if (Platform.OS === 'web') { setCameraTarget(target); return; }
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Permission Required', 'Please allow camera access.'); return; }
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: target === 'idCard' ? [16, 10] : [1, 1],
-      quality: target === 'idCard' ? 0.3 : 0.7,
-    });
-    if (!result.canceled && result.assets.length > 0) applyCapturedPhoto(target, result.assets[0].uri);
-  };
-
-  const launchLibrary = async (target: 'profile' | 'idCard') => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Permission Required', 'Please allow photo library access.'); return; }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: target === 'idCard' ? [16, 10] : [1, 1],
-      quality: target === 'idCard' ? 0.3 : 0.7,
-    });
-    if (!result.canceled && result.assets.length > 0) applyCapturedPhoto(target, result.assets[0].uri);
-  };
-
-  const pickWithChoice = (target: 'profile' | 'idCard', title: string) => {
-    if (Platform.OS === 'web') {
-      if (target === 'idCard') { setWebChoiceTarget('idCard'); return; }
-      launchCamera(target);
-      return;
-    }
-    if (Platform.OS === 'ios') {
-      const { ActionSheetIOS } = require('react-native');
-      ActionSheetIOS.showActionSheetWithOptions(
-        { options: ['Cancel', 'Take a Photo', 'Choose from Library'], cancelButtonIndex: 0 },
-        (i: number) => { if (i === 1) launchCamera(target); if (i === 2) launchLibrary(target); },
-      );
-    } else {
-      Alert.alert(title, 'Choose an option', [
-        { text: 'Take a Photo', onPress: () => launchCamera(target) },
-        { text: 'Choose from Library', onPress: () => launchLibrary(target) },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }
-  };
-
-  const handleWebChoice = (action: 'camera' | 'library') => {
-    const target = webChoiceTarget;
-    setWebChoiceTarget(null);
-    if (!target) return;
-    if (action === 'camera') launchCamera(target);
-    else launchLibrary(target);
-  };
-
-  const handlePickCV = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-      copyToCacheDirectory: true,
-    });
-    if (result.canceled || result.assets.length === 0) return;
-    const asset = result.assets[0];
-    const sizeMB = (asset.size ?? 0) / MB;
-    if (sizeMB > MAX_CV_MB) {
-      Alert.alert('File Too Large', `Your file is ${sizeMB.toFixed(1)} MB. Please upload under ${MAX_CV_MB} MB.`);
-      return;
-    }
-    setCvFileName(asset.name);
-  };
-
-  const handlePickVideo = async () => {
-    if (Platform.OS === 'web') { setWebVideoOpen(true); return; }
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Permission Required', 'Please allow media library access.'); return; }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      videoQuality: Platform.OS === 'ios' ? ImagePicker.UIImagePickerControllerQualityType.Medium : undefined,
-      allowsEditing: false,
-    });
-    if (result.canceled || result.assets.length === 0) return;
-    const asset = result.assets[0];
-    const sizeMB = (asset.fileSize ?? 0) / MB;
-    if (sizeMB > MAX_VIDEO_MB) {
-      Alert.alert('Video Too Large', `Your video is ${sizeMB.toFixed(0)} MB. Please upload under ${MAX_VIDEO_MB} MB.`);
-      return;
-    }
-    setVideoFileName(asset.uri.split('/').pop() ?? 'intro_video');
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, { toValue: -900, duration: 280, useNativeDriver: true }).start(() => setPdfUri(null));
   };
 
   const handleSubmit = () => {
@@ -124,31 +53,41 @@ export default function DocumentReviewScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <WebCameraModal
-        visible={cameraTarget !== null}
-        title={cameraTarget === 'idCard' ? 'Take a Photo of Your Ghana Card' : 'Take a Profile Photo'}
-        maxWidth={cameraTarget === 'idCard' ? 320 : 300}
-        onClose={() => setCameraTarget(null)}
-        onCapture={(dataUrl) => { if (cameraTarget) applyCapturedPhoto(cameraTarget, dataUrl); setCameraTarget(null); }}
-      />
-      <WebVideoRecorderModal
-        visible={webVideoOpen}
-        onClose={() => setWebVideoOpen(false)}
-        onSave={(_blob, name) => { setVideoFileName(name); setWebVideoOpen(false); }}
-      />
-      {webChoiceTarget && (
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.modalCard, { maxWidth: 360 }]}>
-            <Text style={styles.modalTitle}>Ghana Card Photo</Text>
-            <Text style={styles.modalHint}>Take a clear photo of your card or upload an existing image.</Text>
-            <Button mode="contained" onPress={() => handleWebChoice('camera')} icon="camera" buttonColor="#1B4F72" style={styles.choiceBtn} contentStyle={{ paddingVertical: 4 }}>Take a Photo</Button>
-            <Button mode="contained-tonal" onPress={() => handleWebChoice('library')} icon="upload" style={styles.choiceBtn} contentStyle={{ paddingVertical: 4 }}>Upload from Files</Button>
-            <Button mode="outlined" onPress={() => setWebChoiceTarget(null)} style={styles.choiceBtn}>Cancel</Button>
-          </View>
+    <>
+      {pdfUri && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, flexDirection: 'row' }}>
+          {/* Dark overlay on the right — tap to close */}
+          <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)' }} activeOpacity={1} onPress={closeDrawer} />
+
+          {/* Sliding drawer from the left */}
+          <Animated.View style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '75%', backgroundColor: '#fff', transform: [{ translateX: slideAnim }], shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 16, shadowOffset: { width: 4, height: 0 }, elevation: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: '#1B4F72' }}>
+              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700' }}>CV / Resume</Text>
+              <TouchableOpacity onPress={closeDrawer} style={{ padding: 4 }}>
+                <Ionicons name="close" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <View style={{ flex: 1 }}>
+              {Platform.OS === 'web'
+                ? React.createElement('iframe', {
+                    src: pdfUri,
+                    style: { width: '100%', height: '100%', border: 'none' },
+                    title: 'CV Preview',
+                  })
+                : (
+                  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+                    <Ionicons name="document-attach-outline" size={48} color="#1B4F72" />
+                    <Text style={{ color: '#2C3E50', marginTop: 12, textAlign: 'center' }}>
+                      PDF preview is not available on this device.
+                    </Text>
+                  </View>
+                )}
+            </View>
+          </Animated.View>
         </View>
       )}
 
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
         <View style={styles.header}>
@@ -158,9 +97,7 @@ export default function DocumentReviewScreen() {
             </View>
           </View>
           <Text style={styles.headerTitle}>Document Review</Text>
-          <Text style={styles.headerSubtitle}>
-            Upload and review your documents before submitting
-          </Text>
+          <Text style={styles.headerSubtitle}>Review your information and upload your documents</Text>
         </View>
 
         <ProfileProgress currentStep={2} />
@@ -172,66 +109,101 @@ export default function DocumentReviewScreen() {
           </View>
         )}
 
-        {/* Ghana Card */}
+        {/* Personal Information Review */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="card-outline" size={20} color="#1B4F72" />
-            <Text style={styles.sectionTitle}>Ghana Card / National ID</Text>
+            <Ionicons name="person-outline" size={20} color="#1B4F72" />
+            <Text style={styles.sectionTitle}>Personal Information</Text>
           </View>
-
-          <TextInput
-            label="Ghana Card / National ID Number"
-            value={idNumber}
-            onChangeText={setIdNumber}
-            mode="outlined"
-            style={styles.input}
-            left={<TextInput.Icon icon="card-account-details" />}
-          />
-
-          <TouchableOpacity style={styles.idCardCapture} onPress={() => pickWithChoice('idCard', 'Ghana Card Photo')} activeOpacity={0.8}>
-            {idPhotoUri ? (
-              <>
-                <Image source={{ uri: idPhotoUri }} style={styles.idCardImage} resizeMode="contain" />
-                <View style={styles.idCardRetakeBadge}>
-                  <Ionicons name="refresh" size={14} color="#fff" />
-                  <Text style={styles.idCardRetakeText}>Retake</Text>
-                </View>
-              </>
-            ) : (
-              <>
-                <Ionicons name="camera-outline" size={32} color="#1B4F72" />
-                <Text style={styles.idCardCaptureTitle}>Take Photo of Ghana Card</Text>
-                <Text style={styles.idCardCaptureHint}>Place your card flat, well-lit, and fully in frame</Text>
-              </>
-            )}
-          </TouchableOpacity>
+          <InfoRow label="Full Name" value={personalData.fullName} />
+          <InfoRow label="Date of Birth" value={personalData.dateOfBirth} />
+          <InfoRow label="Phone Number" value={personalData.phone} />
+          <InfoRow label="Email Address" value={personalData.email} />
+          <InfoRow label="Region" value={personalData.region} />
+          <InfoRow label="City / Town" value={personalData.city} />
         </View>
 
-        {/* Profile Photo, CV, Video */}
+        {/* Professional Information Review */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="attach-outline" size={20} color="#1B4F72" />
-            <Text style={styles.sectionTitle}>Supporting Documents</Text>
+            <Ionicons name="school-outline" size={20} color="#1B4F72" />
+            <Text style={styles.sectionTitle}>Professional Information</Text>
+          </View>
+          <InfoRow
+            label="Subjects"
+            value={Array.isArray(personalData.subjects) && personalData.subjects.length > 0
+              ? personalData.subjects.join(', ')
+              : undefined}
+          />
+          <InfoRow label="Other Subject" value={personalData.otherSubject} />
+          <InfoRow label="Years of Experience" value={personalData.experience} />
+          <InfoRow label="About Yourself" value={personalData.bio} />
+        </View>
+
+        {/* References Review */}
+        {references.length > 0 && (
+          <View style={styles.card}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="people-outline" size={20} color="#1B4F72" />
+              <Text style={styles.sectionTitle}>Professional References</Text>
+            </View>
+            {references.map((ref, i) => (
+              <View key={i} style={{ marginBottom: i < references.length - 1 ? 16 : 0 }}>
+                <Text style={[styles.fieldLabel, { marginBottom: 4 }]}>Reference {i + 1}</Text>
+                <InfoRow label="Name" value={ref.name} />
+                <InfoRow label="Position" value={ref.position} />
+                <InfoRow label="Phone" value={ref.phone} />
+                <InfoRow label="Email" value={ref.email} />
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Documents Review */}
+        <View style={styles.card}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="document-text-outline" size={20} color="#1B4F72" />
+            <Text style={styles.sectionTitle}>Documents & Verification</Text>
           </View>
 
-          <View style={styles.uploadRow}>
-            <TouchableOpacity style={[styles.uploadCard, profilePhotoUri ? styles.chipSelected : null]} onPress={() => pickWithChoice('profile', 'Profile Photo')} activeOpacity={0.8}>
-              {profilePhotoUri
-                ? <Image source={{ uri: profilePhotoUri }} style={{ width: 48, height: 48, borderRadius: 24 }} />
-                : <Ionicons name="camera-outline" size={28} color="#2E86C1" />}
-              <Text style={[styles.uploadLabel, { color: '#2E86C1' }]}>Profile Photo</Text>
-            </TouchableOpacity>
+          <InfoRow label="Ghana Card Number" value={personalData.idNumber} />
 
-            <TouchableOpacity style={[styles.uploadCard, cvFileName ? styles.chipSelected : null]} onPress={handlePickCV} activeOpacity={0.8}>
-              <Ionicons name="document-attach-outline" size={28} color="#8E44AD" />
-              <Text style={[styles.uploadLabel, { color: '#8E44AD' }]} numberOfLines={2}>{cvFileName ?? 'Upload CV'}</Text>
-            </TouchableOpacity>
+          {personalData.idPhotoUri ? (
+            <View style={{ marginTop: 10 }}>
+              <Text style={[styles.fieldLabel, { marginBottom: 6 }]}>Ghana Card Photo</Text>
+              <Image
+                source={{ uri: personalData.idPhotoUri }}
+                style={styles.idCardImage}
+                resizeMode="contain"
+              />
+            </View>
+          ) : null}
 
-            <TouchableOpacity style={[styles.uploadCard, videoFileName ? styles.chipSelected : null]} onPress={handlePickVideo} activeOpacity={0.8}>
-              <Ionicons name="videocam-outline" size={28} color="#E67E22" />
-              <Text style={[styles.uploadLabel, { color: '#E67E22' }]} numberOfLines={2}>{videoFileName ?? 'Video About You'}</Text>
+          {personalData.photoUri ? (
+            <View style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Image
+                source={{ uri: personalData.photoUri }}
+                style={{ width: 52, height: 52, borderRadius: 26 }}
+              />
+              <Text style={{ fontSize: 13, color: '#2C3E50', fontWeight: '500' }}>Profile Photo uploaded</Text>
+            </View>
+          ) : null}
+
+          {personalData.cvFileName ? (
+            <TouchableOpacity
+              onPress={() => personalData.cvUri && openDrawer(personalData.cvUri)}
+              style={{ flexDirection: 'row', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F0F3F8', alignItems: 'center' }}
+            >
+              <Text style={{ flex: 1, fontSize: 13, color: '#7F8C8D' }}>CV / Resume</Text>
+              <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="document-attach-outline" size={16} color="#1B4F72" />
+                <Text style={{ fontSize: 13, color: '#1B4F72', fontWeight: '600', textDecorationLine: 'underline', flexShrink: 1 }}>
+                  {personalData.cvFileName}
+                </Text>
+              </View>
             </TouchableOpacity>
-          </View>
+          ) : null}
+          <InfoRow label="Intro Video" value={personalData.videoFileName} />
         </View>
 
         <View style={styles.btnRow}>
@@ -241,5 +213,6 @@ export default function DocumentReviewScreen() {
         <Text style={styles.hint}>* Your documents will be reviewed by our verification team.</Text>
       </ScrollView>
     </KeyboardAvoidingView>
+    </>
   );
 }

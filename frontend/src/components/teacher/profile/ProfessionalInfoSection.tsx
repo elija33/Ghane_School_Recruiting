@@ -47,9 +47,11 @@ export default function ProfessionalInfoSection({ form, errors, onChange, onTogg
         left={<TextInput.Icon icon="briefcase" />} />
       <HelperText type="error" visible={!!errors.experience}>{errors.experience}</HelperText>
 
-      <TextInput label="About Yourself" value={form.bio} onChangeText={onChange('bio')}
+      <TextInput label="About Yourself *" value={form.bio} onChangeText={onChange('bio')}
         mode="outlined" multiline numberOfLines={4} style={styles.input}
+        error={!!errors.bio}
         placeholder="Tell schools a bit about yourself, your teaching style and goals..." />
+      <HelperText type="error" visible={!!errors.bio}>{errors.bio}</HelperText>
     </View>
   );
 }
