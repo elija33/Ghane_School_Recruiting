@@ -1,33 +1,30 @@
 import { StyleSheet } from 'react-native';
 
-const PRIMARY = '#1B4F72';
-
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: '#F5F8FA' },
-  header: {
-    backgroundColor: PRIMARY,
-    paddingTop: 80,
-    paddingBottom: 48,
-    paddingHorizontal: 24,
+  container: { flexGrow: 1, backgroundColor: '#fff' },
+  avatarWrapper: {
     alignItems: 'center',
+    paddingTop: 48,
+    paddingBottom: 24,
+    backgroundColor: '#fff',
   },
-  iconWrapper: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+  avatarCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#4CAF50',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 18,
+    overflow: 'hidden',
   },
-  title: { fontSize: 26, fontWeight: '800', color: '#fff', marginBottom: 6 },
-  subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.75)', textAlign: 'center' },
-  form: { padding: 24, paddingTop: 32 },
+  form: { paddingHorizontal: 24, paddingTop: 8 },
+  fieldLabel: { fontSize: 15, fontWeight: '700', color: '#1A1A1A', marginBottom: 6, marginTop: 16 },
+  input: { backgroundColor: '#fff', marginBottom: 2 },
   errorBox: {
     backgroundColor: '#FDEDEC',
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#E74C3C',
     flexDirection: 'row',
@@ -35,20 +32,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   errorText: { color: '#C0392B', fontSize: 13, flex: 1 },
-  input: { marginBottom: 4, backgroundColor: '#fff' },
-  forgotLink: { alignSelf: 'flex-end', marginBottom: 28, marginTop: 4 },
-  linkText: { color: PRIMARY, fontWeight: '600', fontSize: 13 },
-  button: { borderRadius: 12, marginBottom: 24 },
-  divider: {
+  loginBtn: { borderRadius: 6, marginTop: 24, marginBottom: 12 },
+  rememberRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
+  rememberText: { fontSize: 14, color: '#333' },
+  footer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
-    gap: 10,
+    paddingVertical: 24,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#D5D8DC' },
-  dividerText: { color: '#95A5A6', fontSize: 12 },
-  registerRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 4 },
-  registerText: { color: '#7F8C8D', fontSize: 13 },
+  registerText: { fontSize: 14, color: '#555' },
+  forgotText: { fontSize: 14, color: '#1B4F72', fontWeight: '700' },
 });
 
 export default styles;

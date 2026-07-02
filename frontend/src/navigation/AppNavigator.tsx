@@ -36,16 +36,16 @@ export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!isAuthenticated ? (
         <>
-          <Stack.Screen name="TeacherProfile" component={TeacherProfileScreen} />
-          <Stack.Screen name="TeacherProfessional" component={ProfessionalScreen} />
-          <Stack.Screen name="TeacherDocuments" component={DocumentReviewScreen} />
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+          <Stack.Screen name="TeacherLogin" component={TeacherLoginScreen} />
+          <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-          <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
-          <Stack.Screen name="TeacherLogin" component={TeacherLoginScreen} />
+          <Stack.Screen name="TeacherProfile" component={TeacherProfileScreen} />
+          <Stack.Screen name="TeacherProfessional" component={ProfessionalScreen} />
+          <Stack.Screen name="TeacherDocuments" component={DocumentReviewScreen} />
         </>
       ) : (
         <>

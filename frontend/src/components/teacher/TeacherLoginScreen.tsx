@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Button, HelperText, Text, TextInput } from 'react-native-paper';
+import { Button, Checkbox, HelperText, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -12,6 +12,7 @@ import styles from './styles/TeacherLoginScreen.styles';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const PRIMARY = '#1B4F72';
+const GREEN = '#4CAF50';
 
 export default function TeacherLoginScreen() {
   const navigation = useNavigation<Nav>();
@@ -21,11 +22,12 @@ export default function TeacherLoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const validate = () => {
     const errors: Record<string, string> = {};
-    if (!email.trim()) errors.email = 'Email is required';
+    if (!email.trim()) errors.email = 'Username is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Invalid email address';
     if (!password) errors.password = 'Password is required';
     setFieldErrors(errors);
@@ -41,12 +43,11 @@ export default function TeacherLoginScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
 
-        <View style={[styles.header, { backgroundColor: PRIMARY }]}>
-          <View style={styles.iconWrapper}>
-            <Ionicons name="school" size={38} color="#fff" />
+        {/* Avatar */}
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarCircle}>
+            <Ionicons name="person" size={80} color="#fff" />
           </View>
-          <Text style={styles.title}>Teacher Login</Text>
-          <Text style={styles.subtitle}>Sign in to your teaching account</Text>
         </View>
 
         <View style={styles.form}>
@@ -57,8 +58,10 @@ export default function TeacherLoginScreen() {
             </View>
           )}
 
+          {/* Username */}
+          <Text style={styles.fieldLabel}>Username</Text>
           <TextInput
-            label="Email Address"
+            placeholder="Enter Username"
             value={email}
             onChangeText={setEmail}
             mode="outlined"
@@ -67,22 +70,22 @@ export default function TeacherLoginScreen() {
             autoComplete="email"
             style={styles.input}
             error={!!fieldErrors.email}
-            left={<TextInput.Icon icon="email-outline" />}
             activeOutlineColor={PRIMARY}
           />
           <HelperText type="error" visible={!!fieldErrors.email}>
             {fieldErrors.email}
           </HelperText>
 
+          {/* Password */}
+          <Text style={styles.fieldLabel}>Password</Text>
           <TextInput
-            label="Password"
+            placeholder="Enter Password"
             value={password}
             onChangeText={setPassword}
             mode="outlined"
             secureTextEntry={!showPassword}
             style={styles.input}
             error={!!fieldErrors.password}
-            left={<TextInput.Icon icon="lock-outline" />}
             right={
               <TextInput.Icon
                 icon={showPassword ? 'eye-off' : 'eye'}
@@ -95,35 +98,36 @@ export default function TeacherLoginScreen() {
             {fieldErrors.password}
           </HelperText>
 
-          <TouchableOpacity style={styles.forgotLink} onPress={() => navigation.navigate('ForgotPassword')}>
-            <Text style={styles.linkText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
+          {/* Login button */}
           <Button
             mode="contained"
             onPress={handleLogin}
             loading={loading}
             disabled={loading}
-            style={styles.button}
-            contentStyle={{ paddingVertical: 8 }}
-            buttonColor={PRIMARY}
-            icon="login"
+            style={styles.loginBtn}
+            contentStyle={{ paddingVertical: 6 }}
+            buttonColor={GREEN}
           >
-            Sign In
+            Login
           </Button>
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>don't have an account?</Text>
-            <View style={styles.dividerLine} />
+          {/* Remember me */}
+          <View style={styles.rememberRow}>
+            <Checkbox
+              status={rememberMe ? 'checked' : 'unchecked'}
+              onPress={() => setRememberMe((v) => !v)}
+              color={GREEN}
+            />
+            <Text style={styles.rememberText}>Remember me</Text>
           </View>
+        </View>
 
-          <View style={styles.registerRow}>
-            <Text style={styles.registerText}>New teacher?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text style={[styles.linkText, { fontSize: 13 }]}>Create an account</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Register row */}
+        <View style={styles.footer}>
+          <Text style={styles.registerText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.forgotText}>Register</Text>
+          </TouchableOpacity>
         </View>
 
       </ScrollView>
