@@ -268,6 +268,8 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
+  AdminLogin: undefined;
+  TeacherLogin: undefined;
   TeacherProfile: undefined;
   TeacherProfessional: { personalData: Record<string, any>; savedRefs?: Array<{ name: string; position: string; phone: string; email: string }> };
   TeacherDocuments: {
