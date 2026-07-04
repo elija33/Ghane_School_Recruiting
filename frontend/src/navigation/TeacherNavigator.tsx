@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import TeacherDashboardScreen from '../components/teacher/TeacherDashboardScreen';
+import ViewMyProfileScreen from '../components/teacher/ViewMyProfileScreen';
 import TeacherProfileScreen from '../components/teacher/TeacherProfileScreen';
 import UploadResumeScreen from '../components/teacher/UploadResumeScreen';
 import TakePhotoScreen from '../components/teacher/TakePhotoScreen';
@@ -28,7 +29,7 @@ function TeacherTabs() {
         tabBarIcon: ({ focused, color, size }) => {
           const icons: Record<string, string> = {
             Dashboard: focused ? 'home' : 'home-outline',
-            Profile: focused ? 'person' : 'person-outline',
+            'View My Profile': focused ? 'person' : 'person-outline',
             Jobs: focused ? 'briefcase' : 'briefcase-outline',
             Applications: focused ? 'document-text' : 'document-text-outline',
             Notifications: focused ? 'notifications' : 'notifications-outline',
@@ -40,7 +41,7 @@ function TeacherTabs() {
       <Tab.Screen name="Dashboard" component={TeacherDashboardScreen} />
       <Tab.Screen name="Jobs" component={BrowseJobsScreen} />
       <Tab.Screen name="Applications" component={ApplicationStatusScreen} />
-      <Tab.Screen name="Profile" component={TeacherProfileScreen} />
+      <Tab.Screen name="View My Profile" component={ViewMyProfileScreen} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
     </Tab.Navigator>
   );
@@ -50,6 +51,7 @@ export default function TeacherNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TeacherTabs" component={TeacherTabs} />
+      <Stack.Screen name="EditProfile" component={TeacherProfileScreen} options={{ headerShown: true, title: 'Edit Profile' }} />
       <Stack.Screen name="UploadResume" component={UploadResumeScreen} />
       <Stack.Screen name="TakePhoto" component={TakePhotoScreen} />
       <Stack.Screen name="RecordVideo" component={RecordVideoScreen} />

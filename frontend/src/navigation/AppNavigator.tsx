@@ -52,6 +52,10 @@ export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
           {showTeacher && <Stack.Screen name="TeacherApp" component={TeacherNavigator} />}
           {showSchool  && <Stack.Screen name="SchoolApp"  component={SchoolNavigator}  />}
           {showAdmin   && <Stack.Screen name="AdminApp"   component={AdminNavigator}   />}
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="TeacherProfile" component={TeacherProfileScreen} />
+          <Stack.Screen name="TeacherProfessional" component={ProfessionalScreen} />
+          <Stack.Screen name="TeacherDocuments" component={DocumentReviewScreen} />
         </>
       )}
     </Stack.Navigator>

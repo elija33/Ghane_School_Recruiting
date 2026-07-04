@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Button, Card, Chip, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,10 +8,11 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { fetchTeacherProfile } from '../../store/slices/teacherSlice';
 import { fetchTeacherApplications } from '../../store/slices/teacherSlice';
 import { logoutUser } from '../../store/slices/authSlice';
-import { TeacherStackParamList, ApplicationStatus } from '../../types';
+import { TeacherStackParamList, ApplicationStatus, RootStackParamList } from '../../types';
 import styles from './styles/TeacherDashboardScreen.styles';
 
 type Nav = NativeStackNavigationProp<TeacherStackParamList>;
+type RootNav = NativeStackNavigationProp<RootStackParamList>;
 
 const STATUS_COLORS: Record<ApplicationStatus, string> = {
   SUBMITTED: '#3498DB',
@@ -33,6 +34,7 @@ const STATUS_LABELS: Record<ApplicationStatus, string> = {
 
 export default function TeacherDashboardScreen() {
   const navigation = useNavigation<Nav>();
+  const rootNavigation = useNavigation<RootNav>();
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector((s) => s.teacher);
   const { applications } = useAppSelector((s) => s.teacher);
@@ -114,16 +116,19 @@ export default function TeacherDashboardScreen() {
       <View style={styles.actionsGrid}>
         {[
           { label: 'Browse Jobs', icon: 'search-outline', screen: 'Jobs' },
-          { label: 'My Profile', icon: 'person-outline', screen: 'Profile' },
-          { label: 'Upload Resume', icon: 'document-attach-outline', screen: 'UploadResume' },
-          { label: 'Take Photo', icon: 'camera-outline', screen: 'TakePhoto' },
-          { label: 'Record Video', icon: 'videocam-outline', screen: 'RecordVideo' },
+          { label: 'Register Account', icon: 'person-add-outline', screen: 'TeacherProfile' },
           { label: 'Applications', icon: 'list-outline', screen: 'Applications' },
         ].map((action) => (
           <Card
             key={action.label}
             style={styles.actionCard}
-            onPress={() => (navigation.navigate as any)(action.screen)}
+            onPress={() => {
+              if (action.screen === 'TeacherProfile') {
+                rootNavigation.navigate('TeacherProfile');
+              } else {
+                (navigation.navigate as any)(action.screen);
+              }
+            }}
           >
             <Card.Content style={styles.actionContent}>
               <Ionicons name={action.icon as any} size={28} color="#1B4F72" />

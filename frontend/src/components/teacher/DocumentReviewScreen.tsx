@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import React, { useRef, useState } from 'react';
+import { Animated, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../types';
@@ -35,7 +35,13 @@ export default function DocumentReviewScreen() {
     : profileStore.getRefs();
 
   const [saved, setSaved] = useState(false);
+  const [thankYouVisible, setThankYouVisible] = useState(false);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
+
+  const fullName: string = personalData.fullName ?? '';
+  const nameParts = fullName.trim().split(' ');
+  const firstName = nameParts[0] ?? '';
+  const lastName = nameParts.slice(1).join(' ') || '';
   const slideAnim = useRef(new Animated.Value(-900)).current;
 
   const openDrawer = (uri: string) => {
@@ -48,12 +54,40 @@ export default function DocumentReviewScreen() {
   };
 
   const handleSubmit = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setThankYouVisible(true);
   };
 
   return (
     <>
+      {/* Thank You Modal */}
+      <Modal visible={thankYouVisible} transparent animationType="fade" onRequestClose={() => setThankYouVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 32, width: '100%', maxWidth: 420, alignItems: 'center' }}>
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#EAF7EE', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+              <Ionicons name="checkmark-circle" size={48} color="#27AE60" />
+            </View>
+            <Text style={{ fontSize: 22, fontWeight: '800', color: '#1A1A1A', textAlign: 'center', marginBottom: 10 }}>
+              Thank you {firstName}{lastName ? ` ${lastName}` : ''}!
+            </Text>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: '#1B4F72', textAlign: 'center', marginBottom: 12 }}>
+              Account Registered Successfully
+            </Text>
+            <Text style={{ fontSize: 14, color: '#555', textAlign: 'center', lineHeight: 22, marginBottom: 28 }}>
+              Check your email for confirmation. Our team will review your documents and get back to you shortly.
+            </Text>
+            <Button
+              mode="contained"
+              onPress={() => setThankYouVisible(false)}
+              buttonColor="#27AE60"
+              style={{ borderRadius: 10, width: '100%' }}
+              contentStyle={{ paddingVertical: 6 }}
+            >
+              Done
+            </Button>
+          </View>
+        </View>
+      </Modal>
+
       {pdfUri && (
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, flexDirection: 'row' }}>
           {/* Dark overlay on the right — tap to close */}
@@ -101,13 +135,6 @@ export default function DocumentReviewScreen() {
         </View>
 
         <ProfileProgress currentStep={2} />
-
-        {saved && (
-          <View style={styles.successBanner}>
-            <Ionicons name="checkmark-circle" size={20} color="#27AE60" />
-            <Text style={styles.successText}>Documents submitted successfully!</Text>
-          </View>
-        )}
 
         {/* Personal Information Review */}
         <View style={styles.card}>
