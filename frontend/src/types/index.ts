@@ -39,6 +39,9 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role: UserRole;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
 }
 
 export interface LoginRequest {
