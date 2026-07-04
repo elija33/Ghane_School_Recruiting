@@ -8,9 +8,22 @@ spring:
     hibernate:
       ddl-auto: update
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-gmail@gmail.com}
+    password: ${MAIL_PASSWORD:your-gmail-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 app:
   jwt:
     secret: ZGV2LWxvY2FsLXNlY3JldC1rZXktbXVzdC1iZS1hdC1sZWFzdC0zMi1jaGFyYWN0ZXJzLWxvbmc=
+  base-url: http://localhost:8081
   cors:
     allowed-origins:
       - http://localhost:3000

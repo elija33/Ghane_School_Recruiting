@@ -472,7 +472,7 @@ export default function RegisterScreen() {
             {/* Already have account */}
             <Button
               mode="outlined"
-              onPress={() => navigation.navigate("TeacherLogin")}
+              onPress={() => navigation.navigate("Onboarding")}
               style={{ borderRadius: 6, borderColor: "#ccc" }}
               contentStyle={{ paddingVertical: 6 }}
               textColor="#1A1A1A"
