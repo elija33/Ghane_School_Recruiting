@@ -126,6 +126,11 @@ export default function OnboardingScreen() {
               <Text style={{ fontSize: 14, color: PRIMARY, fontWeight: '700' }}>Register</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Admin access */}
+          <TouchableOpacity onPress={() => navigation.navigate('AdminDashboard')} style={{ alignItems: 'center', paddingBottom: 16 }}>
+            <Text style={{ fontSize: 12, color: '#aaa' }}>Admin Access</Text>
+          </TouchableOpacity>
         </View>
         </View>
 

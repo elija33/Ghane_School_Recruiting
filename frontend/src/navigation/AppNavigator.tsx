@@ -15,6 +15,9 @@ import TeacherNavigator from './TeacherNavigator';
 import SchoolNavigator from './SchoolNavigator';
 import AdminNavigator from './AdminNavigator';
 import AdminLoginScreen from '../components/admin/AdminLoginScreen';
+import AdminDashboardScreen from '../components/admin/dashboard/AdminDashboardScreen';
+import ManageTeachersScreen from '../components/admin/ManageTeachersScreen';
+import ManageSchoolsScreen from '../components/admin/ManageSchoolsScreen';
 import TeacherLoginScreen from '../components/teacher/TeacherLoginScreen';
 
 export type AppType = 'teacher' | 'school' | 'all';
@@ -40,6 +43,9 @@ export default function AppNavigator({ appType = 'all' }: AppNavigatorProps) {
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="TeacherLogin" component={TeacherLoginScreen} />
           <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
+          <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+          <Stack.Screen name="ManageSchools" component={ManageSchoolsScreen} />
+          <Stack.Screen name="ManageTeachers" component={ManageTeachersScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
