@@ -46,6 +46,8 @@ function NativeSelect({
   options: string[];
   placeholder: string;
 }) {
+  const [open, setOpen] = useState(false);
+
   if (Platform.OS === "web") {
     return React.createElement(
       "select",
@@ -72,25 +74,45 @@ function NativeSelect({
       ),
     );
   }
+
   return (
-    <View
-      style={{
-        height: 52,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 6,
-        paddingHorizontal: 12,
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#fff",
-      }}
-    >
-      <Text style={{ color: value ? "#1A1A1A" : "#999", fontSize: 14 }}>
-        {value || placeholder}
-      </Text>
-      <Ionicons name="chevron-down" size={16} color="#666" />
-    </View>
+    <>
+      <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
+        <TouchableOpacity
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)" }}
+          activeOpacity={1}
+          onPress={() => setOpen(false)}
+        />
+        <View style={{ backgroundColor: "#fff", maxHeight: 340, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16, borderBottomWidth: 1, borderBottomColor: "#eee" }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "#1A1A1A" }}>{placeholder}</Text>
+            <TouchableOpacity onPress={() => setOpen(false)}>
+              <Ionicons name="close" size={22} color="#666" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView>
+            {options.map((o) => (
+              <TouchableOpacity
+                key={o}
+                onPress={() => { onChange(o); setOpen(false); }}
+                style={{ paddingHorizontal: 20, paddingVertical: 14, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#F5F5F5" }}
+              >
+                <Text style={{ fontSize: 15, color: "#1A1A1A" }}>{o}</Text>
+                {value === o && <Ionicons name="checkmark" size={18} color={primaryColor} />}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </Modal>
+
+      <TouchableOpacity
+        onPress={() => setOpen(true)}
+        style={{ height: 52, borderWidth: 1, borderColor: "#ccc", borderRadius: 6, paddingHorizontal: 12, justifyContent: "space-between", flexDirection: "row", alignItems: "center", backgroundColor: "#fff" }}
+      >
+        <Text style={{ color: value ? "#1A1A1A" : "#999", fontSize: 14 }}>{value || placeholder}</Text>
+        <Ionicons name="chevron-down" size={16} color="#666" />
+      </TouchableOpacity>
+    </>
   );
 }
 
