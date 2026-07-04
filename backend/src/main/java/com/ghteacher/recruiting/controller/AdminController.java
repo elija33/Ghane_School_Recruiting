@@ -1,15 +1,20 @@
 package com.ghteacher.recruiting.controller;
 
+import com.ghteacher.recruiting.dto.request.CreateAdminRequest;
 import com.ghteacher.recruiting.dto.response.AdminAnalyticsResponse;
+import com.ghteacher.recruiting.dto.response.AdminUserResponse;
 import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
 import com.ghteacher.recruiting.enums.VerificationStatus;
 import com.ghteacher.recruiting.service.AdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,5 +57,21 @@ public class AdminController {
     @GetMapping("/analytics")
     public ResponseEntity<AdminAnalyticsResponse> getAnalytics() {
         return ResponseEntity.ok(adminService.getAnalytics());
+    }
+
+    @PostMapping("/admins")
+    public ResponseEntity<AdminUserResponse> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(request));
+    }
+
+    @GetMapping("/admins")
+    public ResponseEntity<List<AdminUserResponse>> listAdmins() {
+        return ResponseEntity.ok(adminService.listAdmins());
+    }
+
+    @DeleteMapping("/admins/{userId}")
+    public ResponseEntity<Void> removeAdmin(@PathVariable UUID userId) {
+        adminService.removeAdmin(userId);
+        return ResponseEntity.noContent().build();
     }
 }

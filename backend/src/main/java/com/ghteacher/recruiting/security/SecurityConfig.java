@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/subscriptions/webhook").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/api/admin/admins").permitAll()
+                .requestMatchers("/api/admin/admins/**").permitAll()
                 .requestMatchers("/api/teachers/**").hasRole("TEACHER")
                 .requestMatchers("/api/schools/**").hasRole("SCHOOL")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

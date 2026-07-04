@@ -32,6 +32,15 @@ public class User {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
+    @Column(name = "first_name", length = 100)
+    private String firstName;
+
+    @Column(name = "last_name", length = 100)
+    private String lastName;
+
+    @Column(name = "access_scope", length = 20)
+    private String accessScope;
+
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean isActive = true;

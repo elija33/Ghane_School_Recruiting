@@ -1,14 +1,20 @@
 package com.ghteacher.recruiting.service;
 
+import com.ghteacher.recruiting.dto.request.CreateAdminRequest;
 import com.ghteacher.recruiting.dto.response.AdminAnalyticsResponse;
+import com.ghteacher.recruiting.dto.response.AdminUserResponse;
 import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
 import com.ghteacher.recruiting.entity.TeacherProfile;
+import com.ghteacher.recruiting.entity.User;
 import com.ghteacher.recruiting.enums.SubscriptionStatus;
+import com.ghteacher.recruiting.enums.UserRole;
 import com.ghteacher.recruiting.enums.VerificationStatus;
 import com.ghteacher.recruiting.exception.BusinessException;
+import com.ghteacher.recruiting.exception.DuplicateResourceException;
 import com.ghteacher.recruiting.exception.ResourceNotFoundException;
 import com.ghteacher.recruiting.repository.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,6 +39,7 @@ public class AdminService {
     private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Page<TeacherProfileResponse> getAllTeachers(VerificationStatus status, int page, int size) {
@@ -114,6 +122,56 @@ public class AdminService {
                 .activeSubscriptions(subscriptionRepository.countByStatus(SubscriptionStatus.ACTIVE))
                 .totalJobPostings(jobListingRepository.count())
                 .totalApplications(applicationRepository.count())
+                .build();
+    }
+
+    @Transactional
+    public AdminUserResponse createAdmin(CreateAdminRequest request) {
+        if (userRepository.existsByEmail(request.getEmail().toLowerCase().trim())) {
+            throw new DuplicateResourceException("Email already registered: " + request.getEmail());
+        }
+        String scope = request.getAccessScope() != null ? request.getAccessScope().toUpperCase() : "BOTH";
+        User user = User.builder()
+                .email(request.getEmail().toLowerCase().trim())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .role(UserRole.ADMIN)
+                .firstName(request.getFirstName().trim())
+                .lastName(request.getLastName().trim())
+                .accessScope(scope)
+                .build();
+        user = userRepository.save(user);
+        log.info("Admin account created: {}", user.getEmail());
+        return toAdminUserResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminUserResponse> listAdmins() {
+        return userRepository.findAllByRoleOrderByCreatedAtDesc(UserRole.ADMIN)
+                .stream()
+                .map(this::toAdminUserResponse)
+                .toList();
+    }
+
+    @Transactional
+    public void removeAdmin(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user", "id", userId));
+        if (user.getRole() != UserRole.ADMIN) {
+            throw new BusinessException("User is not an admin");
+        }
+        userRepository.delete(user);
+        log.info("Admin account removed: {}", user.getEmail());
+    }
+
+    private AdminUserResponse toAdminUserResponse(User u) {
+        return AdminUserResponse.builder()
+                .id(u.getId())
+                .email(u.getEmail())
+                .firstName(u.getFirstName())
+                .lastName(u.getLastName())
+                .accessScope(u.getAccessScope() != null ? u.getAccessScope() : "BOTH")
+                .isActive(u.isActive())
+                .createdAt(u.getCreatedAt())
                 .build();
     }
 
