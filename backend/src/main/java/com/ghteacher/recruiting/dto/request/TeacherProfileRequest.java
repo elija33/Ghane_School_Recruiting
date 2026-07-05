@@ -1,11 +1,13 @@
 package com.ghteacher.recruiting.dto.request;
 
+import com.ghteacher.recruiting.dto.ReferenceDto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class TeacherProfileRequest {
@@ -32,4 +34,6 @@ public class TeacherProfileRequest {
 
     @Size(max = 100, message = "ID number must not exceed 100 characters")
     private String idNumber;
+
+    private List<ReferenceDto> references;
 }

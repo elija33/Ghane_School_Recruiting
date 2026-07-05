@@ -53,6 +53,13 @@ export interface LoginRequest {
 // Teacher Profile
 // ---------------------------------------------------------------
 
+export interface ReferenceItem {
+  name: string;
+  position: string;
+  phone: string;
+  email: string;
+}
+
 export interface TeacherProfile {
   id: string;
   userId: string;
@@ -68,6 +75,7 @@ export interface TeacherProfile {
   bio: string | null;
   dateOfBirth: string | null;
   idNumber: string | null;
+  references: ReferenceItem[];
   verificationStatus: VerificationStatus;
   isVisibleToSchools: boolean;
   createdAt: string;
@@ -83,6 +91,7 @@ export interface TeacherProfileRequest {
   bio?: string;
   dateOfBirth?: string;
   idNumber?: string;
+  references?: ReferenceItem[];
 }
 
 // ---------------------------------------------------------------
@@ -275,6 +284,8 @@ export type RootStackParamList = {
   AdminDashboard: undefined;
   ManageSchools: undefined;
   ManageTeachers: undefined;
+  VerifiedTeachers: undefined;
+  PendingDocumentReview: undefined;
   TeacherLogin: undefined;
   TeacherProfile: undefined;
   TeacherProfessional: { personalData: Record<string, any>; savedRefs?: Array<{ name: string; position: string; phone: string; email: string }> };

@@ -3,7 +3,8 @@ import { Animated, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, Tou
 import { Button, Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../types';
+import { ReferenceItem, RootStackParamList, TeacherProfileRequest } from '../../types';
+import api from '../../services/api';
 
 import styles from './styles/TeacherProfileScreen.styles';
 import SaveProfileButton from '../SaveProfileButton';
@@ -36,6 +37,8 @@ export default function DocumentReviewScreen() {
 
   const [saved, setSaved] = useState(false);
   const [thankYouVisible, setThankYouVisible] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [pdfUri, setPdfUri] = useState<string | null>(null);
 
   const fullName: string = personalData.fullName ?? '';
@@ -53,8 +56,55 @@ export default function DocumentReviewScreen() {
     Animated.timing(slideAnim, { toValue: -900, duration: 280, useNativeDriver: true }).start(() => setPdfUri(null));
   };
 
-  const handleSubmit = () => {
-    setThankYouVisible(true);
+  // Convert DD/MM/YYYY (stored in profileStore) → YYYY-MM-DD (ISO, required by backend LocalDate)
+  const toIsoDate = (s?: string) => {
+    if (!s) return undefined;
+    const parts = s.split('/');
+    if (parts.length !== 3) return undefined;
+    const [d, m, y] = parts;
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  };
+
+  const handleSubmit = async () => {
+    setSubmitError('');
+    setSubmitting(true);
+    try {
+      const subjects = Array.isArray(personalData.subjects) && personalData.subjects.length > 0
+        ? personalData.subjects.join(', ')
+        : (personalData.otherSubject ?? undefined);
+
+      const locationParts = [personalData.region, personalData.city].filter(Boolean);
+      const location = locationParts.length > 0 ? locationParts.join(', ') : undefined;
+
+      const refs: ReferenceItem[] = references
+        .filter(r => r.name || r.email)
+        .map(r => ({ name: r.name ?? '', position: r.position ?? '', phone: r.phone ?? '', email: r.email ?? '' }));
+
+      const request: TeacherProfileRequest = {
+        fullName:             personalData.fullName    || undefined,
+        phoneNumber:          personalData.phone       || undefined,
+        location,
+        subjectSpecialization: subjects,
+        yearsOfExperience:    personalData.experience  ? parseInt(personalData.experience, 10) : undefined,
+        bio:                  personalData.bio         || undefined,
+        dateOfBirth:          toIsoDate(personalData.dateOfBirth),
+        idNumber:             personalData.idNumber    || undefined,
+        references:           refs.length > 0 ? refs : undefined,
+      };
+
+      try {
+        await api.post('/teachers/profile', request);
+      } catch {
+        // Profile may already exist — fall back to update
+        await api.put('/teachers/profile', request);
+      }
+
+      setThankYouVisible(true);
+    } catch (e: any) {
+      setSubmitError(e?.response?.data?.message ?? 'Submission failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -233,8 +283,20 @@ export default function DocumentReviewScreen() {
           <InfoRow label="Intro Video" value={personalData.videoFileName} />
         </View>
 
+        {submitError ? (
+          <View style={{ marginHorizontal: 16, marginTop: 8, backgroundColor: '#FDEDEC', borderRadius: 10, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons name="alert-circle-outline" size={16} color="#E74C3C" />
+            <Text style={{ color: '#C0392B', fontSize: 13, flex: 1 }}>{submitError}</Text>
+          </View>
+        ) : null}
+
         <View style={styles.btnRow}>
-          <SaveProfileButton onPress={handleSubmit} style={styles.btnFlex} label="Submit Documents" />
+          <SaveProfileButton
+            onPress={handleSubmit}
+            style={styles.btnFlex}
+            label={submitting ? 'Submitting…' : 'Submit Documents'}
+            disabled={submitting}
+          />
         </View>
 
         <Text style={styles.hint}>* Your documents will be reviewed by our verification team.</Text>

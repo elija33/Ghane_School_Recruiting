@@ -1,5 +1,8 @@
 package com.ghteacher.recruiting.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ghteacher.recruiting.dto.ReferenceDto;
 import com.ghteacher.recruiting.dto.request.ApplicationRequest;
 import com.ghteacher.recruiting.dto.request.TeacherProfileRequest;
 import com.ghteacher.recruiting.dto.response.ApplicationResponse;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +34,7 @@ public class TeacherService {
     private final ScreeningQuestionRepository screeningQuestionRepository;
     private final ScreeningAnswerRepository screeningAnswerRepository;
     private final CloudinaryService cloudinaryService;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public TeacherProfileResponse createProfile(String email, TeacherProfileRequest request) {
@@ -50,6 +55,7 @@ public class TeacherService {
                 .bio(sanitize(request.getBio()))
                 .dateOfBirth(request.getDateOfBirth())
                 .idNumber(request.getIdNumber())
+                .referencesJson(serializeRefs(request.getReferences()))
                 .build();
 
         return toResponse(teacherProfileRepository.save(profile));
@@ -59,14 +65,15 @@ public class TeacherService {
     public TeacherProfileResponse updateProfile(String email, TeacherProfileRequest request) {
         TeacherProfile profile = getProfileByEmail(email);
 
-        if (request.getFullName() != null)             profile.setFullName(sanitize(request.getFullName()));
-        if (request.getPhoneNumber() != null)          profile.setPhoneNumber(request.getPhoneNumber());
-        if (request.getLocation() != null)             profile.setLocation(sanitize(request.getLocation()));
+        if (request.getFullName() != null)              profile.setFullName(sanitize(request.getFullName()));
+        if (request.getPhoneNumber() != null)           profile.setPhoneNumber(request.getPhoneNumber());
+        if (request.getLocation() != null)              profile.setLocation(sanitize(request.getLocation()));
         if (request.getSubjectSpecialization() != null) profile.setSubjectSpecialization(sanitize(request.getSubjectSpecialization()));
-        if (request.getYearsOfExperience() != null)   profile.setYearsOfExperience(request.getYearsOfExperience());
-        if (request.getBio() != null)                  profile.setBio(sanitize(request.getBio()));
-        if (request.getDateOfBirth() != null)          profile.setDateOfBirth(request.getDateOfBirth());
-        if (request.getIdNumber() != null)             profile.setIdNumber(request.getIdNumber());
+        if (request.getYearsOfExperience() != null)    profile.setYearsOfExperience(request.getYearsOfExperience());
+        if (request.getBio() != null)                   profile.setBio(sanitize(request.getBio()));
+        if (request.getDateOfBirth() != null)           profile.setDateOfBirth(request.getDateOfBirth());
+        if (request.getIdNumber() != null)              profile.setIdNumber(request.getIdNumber());
+        if (request.getReferences() != null)            profile.setReferencesJson(serializeRefs(request.getReferences()));
 
         return toResponse(teacherProfileRepository.save(profile));
     }
@@ -124,7 +131,6 @@ public class TeacherService {
             throw new DuplicateResourceException("You have already applied for this job");
         }
 
-        // Validate required screening questions are answered
         List<ScreeningQuestion> requiredQuestions = screeningQuestionRepository
                 .findByJobListingIdOrderByQuestionOrderAsc(jobListingId)
                 .stream()
@@ -191,6 +197,7 @@ public class TeacherService {
                 .bio(p.getBio())
                 .dateOfBirth(p.getDateOfBirth())
                 .idNumber(p.getIdNumber())
+                .references(deserializeRefs(p.getReferencesJson()))
                 .verificationStatus(p.getVerificationStatus())
                 .isVisibleToSchools(p.isVisibleToSchools())
                 .createdAt(p.getCreatedAt())
@@ -219,6 +226,26 @@ public class TeacherService {
                                 .build())
                         .toList())
                 .build();
+    }
+
+    private String serializeRefs(List<ReferenceDto> refs) {
+        if (refs == null || refs.isEmpty()) return null;
+        try {
+            return objectMapper.writeValueAsString(refs);
+        } catch (Exception e) {
+            log.warn("Failed to serialize references: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private List<ReferenceDto> deserializeRefs(String json) {
+        if (json == null || json.isBlank()) return Collections.emptyList();
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<ReferenceDto>>() {});
+        } catch (Exception e) {
+            log.warn("Failed to deserialize references: {}", e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     private String sanitize(String input) {

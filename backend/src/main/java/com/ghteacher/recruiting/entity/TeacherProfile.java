@@ -61,6 +61,9 @@ public class TeacherProfile {
     @Column(name = "id_number", length = 100)
     private String idNumber;
 
+    @Column(name = "references_json", columnDefinition = "TEXT")
+    private String referencesJson;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "verification_status", nullable = false, length = 20)
     @Builder.Default

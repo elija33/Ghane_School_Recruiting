@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import TeacherDashboardScreen from '../components/teacher/TeacherDashboardScreen';
+import TeacherDashboardScreen from '../components/teacher/dashboard/TeacherDashboardScreen';
 import ViewMyProfileScreen from '../components/teacher/ViewMyProfileScreen';
 import TeacherProfileScreen from '../components/teacher/TeacherProfileScreen';
 import UploadResumeScreen from '../components/teacher/UploadResumeScreen';

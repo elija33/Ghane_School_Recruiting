@@ -1,5 +1,6 @@
 package com.ghteacher.recruiting.dto.response;
 
+import com.ghteacher.recruiting.dto.ReferenceDto;
 import com.ghteacher.recruiting.enums.VerificationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -30,6 +32,7 @@ public class TeacherProfileResponse {
     private String bio;
     private LocalDate dateOfBirth;
     private String idNumber;
+    private List<ReferenceDto> references;
     private VerificationStatus verificationStatus;
     private boolean isVisibleToSchools;
     private Instant createdAt;
