@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, Card, HelperText, Switch, Text, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../store';
 import { createJob } from '../../store/slices/schoolSlice';
 import { SchoolStackParamList } from '../../types';
 import { extractErrorMessage } from '../../services/api';
+import { adminService } from '../../services/adminService';
 import styles from './style/PostJobScreen.styles';
 
 type Nav = NativeStackNavigationProp<SchoolStackParamList>;
@@ -33,6 +34,22 @@ export default function PostJobScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [regions, setRegions] = useState<string[]>([]);
+  const [regionsLoading, setRegionsLoading] = useState(true);
+
+  useEffect(() => {
+    adminService.getSubjects()
+      .then(setSubjects)
+      .catch(() => {})
+      .finally(() => setSubjectsLoading(false));
+    adminService.getRegions()
+      .then(setRegions)
+      .catch(() => {})
+      .finally(() => setRegionsLoading(false));
+  }, []);
 
   const addQuestion = () => {
     setScreeningQuestions([
@@ -139,26 +156,40 @@ export default function PostJobScreen() {
             />
             <HelperText type="error" visible={!!errors.title}>{errors.title}</HelperText>
 
-            <TextInput
-              label="Subject *"
-              value={subject}
-              onChangeText={setSubject}
-              mode="outlined"
-              style={styles.input}
-              error={!!errors.subject}
-              placeholder="e.g. Mathematics, Science, English"
-            />
+            <Text style={styles.fieldLabel}>Subject * (select one)</Text>
+            {subjectsLoading ? (
+              <ActivityIndicator color="#1B4F72" style={{ marginBottom: 12 }} />
+            ) : (
+              <View style={styles.chipGrid}>
+                {subjects.map((s) => (
+                  <TouchableOpacity
+                    key={s}
+                    onPress={() => setSubject(subject === s ? '' : s)}
+                    style={[styles.chip, subject === s && styles.chipSelected]}
+                  >
+                    <Text style={[styles.chipText, subject === s && styles.chipTextSelected]}>{s}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
             <HelperText type="error" visible={!!errors.subject}>{errors.subject}</HelperText>
 
-            <TextInput
-              label="Location *"
-              value={location}
-              onChangeText={setLocation}
-              mode="outlined"
-              style={styles.input}
-              error={!!errors.location}
-              placeholder="e.g. Accra, Kumasi"
-            />
+            <Text style={[styles.fieldLabel, { marginTop: 8 }]}>Region *</Text>
+            {regionsLoading ? (
+              <ActivityIndicator color="#1B4F72" style={{ marginBottom: 12 }} />
+            ) : (
+              <View style={styles.chipGrid}>
+                {regions.map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    onPress={() => setLocation(location === r ? '' : r)}
+                    style={[styles.chip, location === r && styles.chipSelected]}
+                  >
+                    <Text style={[styles.chipText, location === r && styles.chipTextSelected]}>{r}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
             <HelperText type="error" visible={!!errors.location}>{errors.location}</HelperText>
           </Card.Content>
         </Card>

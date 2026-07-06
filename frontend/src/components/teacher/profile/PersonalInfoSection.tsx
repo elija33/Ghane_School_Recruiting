@@ -1,28 +1,9 @@
 import React, { useRef } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Platform, TouchableOpacity, View } from 'react-native';
 import { HelperText, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../styles/TeacherProfileScreen.styles';
 import { FormData, FormErrors } from './types';
-
-const GHANA_REGIONS: { name: string; enabled: boolean }[] = [
-  { name: 'Greater Accra', enabled: true },
-  { name: 'Ashanti', enabled: true },
-  { name: 'Western', enabled: false },
-  { name: 'Central', enabled: false },
-  { name: 'Eastern', enabled: false },
-  { name: 'Northern', enabled: false },
-  { name: 'Upper East', enabled: false },
-  { name: 'Upper West', enabled: false },
-  { name: 'Volta', enabled: false },
-  { name: 'Brong-Ahafo', enabled: false },
-  { name: 'Oti', enabled: false },
-  { name: 'Ahafo', enabled: false },
-  { name: 'Bono East', enabled: false },
-  { name: 'North East', enabled: false },
-  { name: 'Savannah', enabled: false },
-  { name: 'Western North', enabled: false },
-];
 
 // "DD/MM/YYYY" → "YYYY-MM-DD" for the HTML date input value
 function toInputValue(dmy: string): string {
@@ -41,10 +22,12 @@ function fromInputValue(ymd: string): string {
 interface Props {
   form: Pick<FormData, 'fullName' | 'dateOfBirth' | 'phone' | 'email' | 'region' | 'city'>;
   errors: FormErrors;
+  regions: string[];
+  regionsLoading?: boolean;
   onChange: (key: keyof FormData) => (val: string) => void;
 }
 
-export default function PersonalInfoSection({ form, errors, onChange }: Props) {
+export default function PersonalInfoSection({ form, errors, regions, regionsLoading, onChange }: Props) {
   const dateInputRef = useRef<any>(null);
 
   const openDatePicker = () => {
@@ -109,20 +92,23 @@ export default function PersonalInfoSection({ form, errors, onChange }: Props) {
       <HelperText type="error" visible={!!errors.email}>{errors.email}</HelperText>
 
       <Text style={styles.fieldLabel}>Region *</Text>
-      <View style={styles.chipGrid}>
-        {GHANA_REGIONS.map((r) => (
-          <TouchableOpacity
-            key={r.name}
-            style={[styles.chip, form.region === r.name && styles.chipSelected, !r.enabled && styles.chipDisabled]}
-            onPress={() => r.enabled && onChange('region')(r.name)}
-            disabled={!r.enabled}
-          >
-            <Text style={[styles.chipText, form.region === r.name && styles.chipTextSelected, !r.enabled && styles.chipTextDisabled]}>
-              {r.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {regionsLoading ? (
+        <View style={{ paddingVertical: 16, alignItems: 'center' }}>
+          <ActivityIndicator color="#1B4F72" />
+        </View>
+      ) : (
+        <View style={styles.chipGrid}>
+          {regions.map((r) => (
+            <TouchableOpacity
+              key={r}
+              style={[styles.chip, form.region === r && styles.chipSelected]}
+              onPress={() => onChange('region')(r)}
+            >
+              <Text style={[styles.chipText, form.region === r && styles.chipTextSelected]}>{r}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
       {!!errors.region && <Text style={styles.errorText}>{errors.region}</Text>}
 
       <TextInput label="City / Town" value={form.city} onChangeText={onChange('city')}

@@ -1,9 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Modal,
+  Platform,
   RefreshControl,
   ScrollView,
+  TextInput as RNTextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -98,6 +101,103 @@ export default function ManageTeachersScreen() {
   const [hasMore, setHasMore]           = useState(false);
   const [search, setSearch]             = useState('');
 
+  // Subject management
+  const [subjects, setSubjects]           = useState<{ id: string; name: string }[]>([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [addingSubject, setAddingSubject] = useState(false);
+  const [newSubject, setNewSubject]       = useState('');
+  const [subjectSaving, setSubjectSaving] = useState(false);
+  const subjectInputRef = useRef<RNTextInput>(null);
+
+  // Region management
+  const [regions, setRegions]             = useState<{ id: string; name: string }[]>([]);
+  const [regionsLoading, setRegionsLoading] = useState(true);
+  const [addingRegion, setAddingRegion]   = useState(false);
+  const [newRegion, setNewRegion]         = useState('');
+  const [regionSaving, setRegionSaving]   = useState(false);
+  const regionInputRef = useRef<RNTextInput>(null);
+
+  // Shared confirm-delete modal
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string; type: 'subject' | 'region' } | null>(null);
+  const [deleting, setDeleting]           = useState(false);
+
+  useEffect(() => {
+    adminService.getSubjectsWithIds()
+      .then(setSubjects)
+      .catch(() => {})
+      .finally(() => setSubjectsLoading(false));
+    adminService.getRegionsWithIds()
+      .then(setRegions)
+      .catch(() => {})
+      .finally(() => setRegionsLoading(false));
+  }, []);
+
+  const handleAddSubject = async () => {
+    const name = newSubject.trim();
+    if (!name) return;
+    setSubjectSaving(true);
+    try {
+      const created = await adminService.createSubject(name);
+      setSubjects(prev => [...prev, { id: created.id, name: created.name }].sort((a, b) => a.name.localeCompare(b.name)));
+      setNewSubject('');
+      setAddingSubject(false);
+    } catch (e) {
+      const msg = extractErrorMessage(e);
+      if (Platform.OS === 'web') (window as any).alert(msg);
+      else Alert.alert('Error', msg);
+    } finally {
+      setSubjectSaving(false);
+    }
+  };
+
+  const handleAddRegion = async () => {
+    const name = newRegion.trim();
+    if (!name) return;
+    setRegionSaving(true);
+    try {
+      const created = await adminService.createRegion(name);
+      setRegions(prev => [...prev, { id: created.id, name: created.name }].sort((a, b) => a.name.localeCompare(b.name)));
+      setNewRegion('');
+      setAddingRegion(false);
+    } catch (e) {
+      const msg = extractErrorMessage(e);
+      if (Platform.OS === 'web') (window as any).alert(msg);
+      else Alert.alert('Error', msg);
+    } finally {
+      setRegionSaving(false);
+    }
+  };
+
+  const handleDeleteSubject = (id: string, name: string) => {
+    setConfirmDelete({ id, name, type: 'subject' });
+  };
+
+  const handleDeleteRegion = (id: string, name: string) => {
+    setConfirmDelete({ id, name, type: 'region' });
+  };
+
+  const confirmDeleteItem = async () => {
+    if (!confirmDelete) return;
+    setDeleting(true);
+    try {
+      if (confirmDelete.type === 'subject') {
+        await adminService.deleteSubject(confirmDelete.id);
+        setSubjects(prev => prev.filter(s => s.id !== confirmDelete.id));
+      } else {
+        await adminService.deleteRegion(confirmDelete.id);
+        setRegions(prev => prev.filter(r => r.id !== confirmDelete.id));
+      }
+      setConfirmDelete(null);
+    } catch (e) {
+      setConfirmDelete(null);
+      const msg = extractErrorMessage(e);
+      if (Platform.OS === 'web') (window as any).alert(msg);
+      else Alert.alert('Error', msg);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const loadData = useCallback(async (reset = false) => {
     setError('');
     try {
@@ -173,6 +273,47 @@ export default function ManageTeachersScreen() {
   const totalAnalytics = analytics?.totalTeachers ?? teachers.length;
 
   return (
+    <>
+    {/* ── Confirm Remove Subject Modal ── */}
+    <Modal visible={!!confirmDelete} transparent animationType="fade" onRequestClose={() => setConfirmDelete(null)}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+        <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 28, width: '100%', maxWidth: 380 }}>
+          {/* Icon */}
+          <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: '#FDEDEC', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 16 }}>
+            <Ionicons name="trash-outline" size={24} color={RED} />
+          </View>
+
+          <Text style={{ fontSize: 18, fontWeight: '800', color: '#1A1A1A', textAlign: 'center', marginBottom: 8 }}>
+            Remove {confirmDelete?.type === 'region' ? 'Region' : 'Subject'}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#666', textAlign: 'center', lineHeight: 21, marginBottom: 24 }}>
+            Are you sure you want to remove{' '}
+            <Text style={{ fontWeight: '700', color: PRIMARY }}>"{confirmDelete?.name}"</Text>
+            {' '}from the {confirmDelete?.type === 'region' ? 'region' : 'subject'} list?
+          </Text>
+
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <TouchableOpacity
+              onPress={() => setConfirmDelete(null)}
+              style={{ flex: 1, borderWidth: 1.5, borderColor: '#E0E0E0', borderRadius: 12, paddingVertical: 13, alignItems: 'center' }}
+            >
+              <Text style={{ fontWeight: '700', color: '#555', fontSize: 14 }}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={confirmDeleteItem}
+              disabled={deleting}
+              style={{ flex: 1, backgroundColor: RED, borderRadius: 12, paddingVertical: 13, alignItems: 'center' }}
+            >
+              {deleting
+                ? <ActivityIndicator size="small" color="#fff" />
+                : <Text style={{ fontWeight: '700', color: '#fff', fontSize: 14 }}>Remove</Text>
+              }
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+
     <ScrollView
       style={{ flex: 1, backgroundColor: '#F5F6FA' }}
       contentContainerStyle={{ paddingBottom: 40 }}
@@ -217,6 +358,166 @@ export default function ManageTeachersScreen() {
           <BarRow label="Pending"   value={analytics?.pendingVerificationTeachers ?? counts.pending}   total={totalAnalytics} color={ORANGE} />
           <BarRow label="In Review" value={counts.inReview} total={totalAnalytics} color={BLUE}   />
           <BarRow label="Failed"    value={counts.failed}   total={totalAnalytics} color={RED}    />
+        </View>
+
+        {/* ── Subject Specialization Management ── */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Ionicons name="book-outline" size={20} color={PRIMARY} />
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#1A1A1A' }}>Subject Specialization</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => { setAddingSubject(v => !v); setNewSubject(''); }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: addingSubject ? '#FDEDEC' : PRIMARY, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 }}
+            >
+              <Ionicons name={addingSubject ? 'close' : 'add'} size={16} color="#fff" />
+              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 12 }}>{addingSubject ? 'Cancel' : 'Add Subject'}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Add input */}
+          {addingSubject && (
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
+              <RNTextInput
+                ref={subjectInputRef}
+                value={newSubject}
+                onChangeText={setNewSubject}
+                placeholder="Subject name…"
+                placeholderTextColor="#aaa"
+                autoFocus
+                onSubmitEditing={handleAddSubject}
+                returnKeyType="done"
+                style={{
+                  flex: 1, height: 42, borderWidth: 1.5, borderColor: PRIMARY,
+                  borderRadius: 10, paddingHorizontal: 14, fontSize: 14, color: '#1A1A1A',
+                  backgroundColor: '#F8FAFC',
+                }}
+              />
+              <TouchableOpacity
+                onPress={handleAddSubject}
+                disabled={subjectSaving || !newSubject.trim()}
+                style={{
+                  height: 42, paddingHorizontal: 18, borderRadius: 10,
+                  backgroundColor: newSubject.trim() ? PRIMARY : '#E0E0E0',
+                  alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                {subjectSaving
+                  ? <ActivityIndicator size="small" color="#fff" />
+                  : <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>Add</Text>
+                }
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Subject chips */}
+          {subjectsLoading ? (
+            <ActivityIndicator color={PRIMARY} style={{ marginVertical: 12 }} />
+          ) : subjects.length === 0 ? (
+            <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center', paddingVertical: 12 }}>No subjects yet. Tap "Add Subject" to create one.</Text>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {subjects.map(s => (
+                <View
+                  key={s.id}
+                  style={{
+                    flexDirection: 'row', alignItems: 'center', gap: 6,
+                    backgroundColor: '#EBF5FB', borderRadius: 20,
+                    paddingLeft: 12, paddingRight: 6, paddingVertical: 6,
+                    borderWidth: 1, borderColor: '#D6EAF8',
+                  }}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: PRIMARY }}>{s.name}</Text>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteSubject(s.id, s.name)}
+                    style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#FDEDEC', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <Ionicons name="close" size={11} color={RED} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* ── Region Management ── */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Ionicons name="location-outline" size={20} color={PRIMARY} />
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#1A1A1A' }}>Regions</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => { setAddingRegion(v => !v); setNewRegion(''); }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: addingRegion ? '#FDEDEC' : PRIMARY, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 }}
+            >
+              <Ionicons name={addingRegion ? 'close' : 'add'} size={16} color="#fff" />
+              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 12 }}>{addingRegion ? 'Cancel' : 'Add Region'}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {addingRegion && (
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
+              <RNTextInput
+                ref={regionInputRef}
+                value={newRegion}
+                onChangeText={setNewRegion}
+                placeholder="Region name…"
+                placeholderTextColor="#aaa"
+                autoFocus
+                onSubmitEditing={handleAddRegion}
+                returnKeyType="done"
+                style={{
+                  flex: 1, height: 42, borderWidth: 1.5, borderColor: PRIMARY,
+                  borderRadius: 10, paddingHorizontal: 14, fontSize: 14, color: '#1A1A1A',
+                  backgroundColor: '#F8FAFC',
+                }}
+              />
+              <TouchableOpacity
+                onPress={handleAddRegion}
+                disabled={regionSaving || !newRegion.trim()}
+                style={{
+                  height: 42, paddingHorizontal: 18, borderRadius: 10,
+                  backgroundColor: newRegion.trim() ? PRIMARY : '#E0E0E0',
+                  alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                {regionSaving
+                  ? <ActivityIndicator size="small" color="#fff" />
+                  : <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>Add</Text>
+                }
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {regionsLoading ? (
+            <ActivityIndicator color={PRIMARY} style={{ marginVertical: 12 }} />
+          ) : regions.length === 0 ? (
+            <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center', paddingVertical: 12 }}>No regions yet. Tap "Add Region" to create one.</Text>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {regions.map(r => (
+                <View
+                  key={r.id}
+                  style={{
+                    flexDirection: 'row', alignItems: 'center', gap: 6,
+                    backgroundColor: '#EBF5FB', borderRadius: 20,
+                    paddingLeft: 12, paddingRight: 6, paddingVertical: 6,
+                    borderWidth: 1, borderColor: '#D6EAF8',
+                  }}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: PRIMARY }}>{r.name}</Text>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteRegion(r.id, r.name)}
+                    style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#FDEDEC', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <Ionicons name="close" size={11} color={RED} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* ── Search ── */}
@@ -356,5 +657,6 @@ export default function ManageTeachersScreen() {
 
       </View>
     </ScrollView>
+    </>
   );
 }

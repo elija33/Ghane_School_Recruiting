@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ import ProfessionalInfoSection from './profile/ProfessionalInfoSection';
 import DocumentsSection from './profile/DocumentsSection';
 import { FormData, FormErrors, initialForm } from './profile/types';
 import { profileStore } from './profileStore';
+import { adminService } from '../../services/adminService';
 
 const MAX_CV_MB = 10;
 const MAX_VIDEO_MB = 100;
@@ -40,6 +41,21 @@ export default function TeacherProfileScreen() {
   const [cameraTarget, setCameraTarget] = useState<'avatar' | 'idCard' | null>(null);
   const [webChoiceTarget, setWebChoiceTarget] = useState<'idCard' | null>(null);
   const [webVideoOpen, setWebVideoOpen] = useState(false);
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [regions, setRegions] = useState<string[]>([]);
+  const [regionsLoading, setRegionsLoading] = useState(true);
+
+  useEffect(() => {
+    adminService.getSubjects()
+      .then(setSubjects)
+      .catch(() => {})
+      .finally(() => setSubjectsLoading(false));
+    adminService.getRegions()
+      .then(setRegions)
+      .catch(() => {})
+      .finally(() => setRegionsLoading(false));
+  }, []);
 
   const applyCapturedPhoto = (target: 'avatar' | 'idCard', uri: string) => {
     if (target === 'avatar') setPhotoUri(uri);
@@ -218,8 +234,21 @@ export default function TeacherProfileScreen() {
           </View>
         )}
 
-        <PersonalInfoSection form={form} errors={errors} onChange={onChange} />
-        <ProfessionalInfoSection form={form} errors={errors} onChange={onChange} onToggleSubject={onToggleSubject} />
+        <PersonalInfoSection
+          form={form}
+          errors={errors}
+          regions={regions}
+          regionsLoading={regionsLoading}
+          onChange={onChange}
+        />
+        <ProfessionalInfoSection
+          form={form}
+          errors={errors}
+          subjects={subjects}
+          subjectsLoading={subjectsLoading}
+          onChange={onChange}
+          onToggleSubject={onToggleSubject}
+        />
         <DocumentsSection
           form={form}
           idPhotoUri={idPhotoUri}

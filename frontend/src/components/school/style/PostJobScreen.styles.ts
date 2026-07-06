@@ -3,6 +3,16 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F6FA' },
   content: { padding: 16, paddingBottom: 40 },
+
+  fieldLabel: { fontSize: 14, fontWeight: '600', color: '#2C3E50', marginBottom: 10 },
+  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 4 },
+  chip: {
+    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
+    borderWidth: 1.5, borderColor: '#D5D8DC', backgroundColor: '#F8F9FA',
+  },
+  chipSelected: { borderColor: '#1B4F72', backgroundColor: '#EBF5FB' },
+  chipText: { fontSize: 13, color: '#626567' },
+  chipTextSelected: { color: '#1B4F72', fontWeight: '600' },
   errorBox: {
     backgroundColor: '#FDEDEC',
     borderRadius: 8,

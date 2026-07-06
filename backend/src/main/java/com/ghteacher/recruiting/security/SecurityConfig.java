@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/subscriptions/webhook").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/subjects/**").permitAll()
+                .requestMatchers("/api/regions/**").permitAll()
                 .requestMatchers("/api/verification/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/teachers/profile").authenticated()
                 .requestMatchers(HttpMethod.PUT,  "/api/teachers/profile").authenticated()

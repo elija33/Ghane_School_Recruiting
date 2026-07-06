@@ -88,4 +88,46 @@ export const adminService = {
   async getTeacherVerifications(teacherId: string): Promise<VerificationRequest[]> {
     return adminService.getVerifications(teacherId);
   },
+
+  // ── Subjects ──────────────────────────────────────────────────────────────
+
+  async getSubjects(): Promise<string[]> {
+    const { data } = await api.get<string[]>('/subjects');
+    return data;
+  },
+
+  async getSubjectsWithIds(): Promise<{ id: string; name: string; createdAt: string }[]> {
+    const { data } = await api.get<{ id: string; name: string; createdAt: string }[]>('/subjects/admin');
+    return data;
+  },
+
+  async createSubject(name: string): Promise<{ id: string; name: string; createdAt: string }> {
+    const { data } = await api.post<{ id: string; name: string; createdAt: string }>('/subjects/admin', { name });
+    return data;
+  },
+
+  async deleteSubject(id: string): Promise<void> {
+    await api.delete(`/subjects/admin/${id}`);
+  },
+
+  // ── Regions ──────────────────────────────────────────────────────────────
+
+  async getRegions(): Promise<string[]> {
+    const { data } = await api.get<string[]>('/regions');
+    return data;
+  },
+
+  async getRegionsWithIds(): Promise<{ id: string; name: string; createdAt: string }[]> {
+    const { data } = await api.get<{ id: string; name: string; createdAt: string }[]>('/regions/admin');
+    return data;
+  },
+
+  async createRegion(name: string): Promise<{ id: string; name: string; createdAt: string }> {
+    const { data } = await api.post<{ id: string; name: string; createdAt: string }>('/regions/admin', { name });
+    return data;
+  },
+
+  async deleteRegion(id: string): Promise<void> {
+    await api.delete(`/regions/admin/${id}`);
+  },
 };

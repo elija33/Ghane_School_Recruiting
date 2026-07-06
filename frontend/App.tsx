@@ -6,6 +6,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider, MD3LightTheme } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as Linking from 'expo-linking';
 
 import { store, persistor } from './src/store';
 import AppNavigator, { AppType } from './src/navigation/AppNavigator';
@@ -39,6 +40,93 @@ const teacherTheme = {
 
 const theme = appType === 'school' ? schoolTheme : teacherTheme;
 
+// URL → screen mapping so browser refresh restores the current page
+const linking: any = {
+  prefixes: [Linking.createURL('/')],
+  config: {
+    screens: {
+      // ── Unauthenticated ──────────────────────────────────────────
+      Splash:                '',
+      Onboarding:            'onboarding',
+      Login:                 'login',
+      Register:              'register',
+      TeacherLogin:          'teacher-login',
+      AdminLogin:            'admin-login',
+      ForgotPassword:        'forgot-password',
+      TeacherProfile:        'profile',
+      TeacherProfessional:   'professional',
+      TeacherDocuments:      'documents',
+
+      // ── Admin bypass (no auth required) ─────────────────────────
+      AdminDashboard:        'admin',
+      ManageSchools:         'admin/schools',
+      ManageTeachers:        'admin/teachers',
+      VerifiedTeachers:      'admin/teachers/verified',
+      PendingDocumentReview: 'admin/teachers/pending',
+
+      // ── Authenticated: Teacher ───────────────────────────────────
+      TeacherApp: {
+        screens: {
+          TeacherTabs: {
+            screens: {
+              Dashboard:        'teacher',
+              Jobs:             'teacher/jobs',
+              Applications:     'teacher/applications',
+              'View My Profile':'teacher/my-profile',
+              Notifications:    'teacher/notifications',
+            },
+          },
+          EditProfile:   'teacher/edit-profile',
+          UploadResume:  'teacher/upload-resume',
+          TakePhoto:     'teacher/photo',
+          RecordVideo:   'teacher/video',
+          JobDetail:     'teacher/job/:jobId',
+          ApplyJob:      'teacher/apply/:jobId',
+        },
+      },
+
+      // ── Authenticated: School ─────────────────────────────────────
+      SchoolApp: {
+        screens: {
+          SchoolTabs: {
+            screens: {
+              Dashboard:         'school',
+              Teachers:          'school/teachers',
+              Jobs:              'school/jobs',
+              Profile:           'school/profile',
+              Notifications:     'school/notifications',
+            },
+          },
+          Subscription:      'school/subscription',
+          PostJob:           'school/post-job',
+          ManageJobs:        'school/manage-jobs',
+          BrowseTeachers:    'school/browse-teachers',
+          TeacherProfileView:'school/teacher/:teacherId',
+          Applications:      'school/applications',
+          ApplicationDetail: 'school/application/:applicationId',
+        },
+      },
+
+      // ── Authenticated: Admin ──────────────────────────────────────
+      AdminApp: {
+        screens: {
+          AdminTabs: {
+            screens: {
+              Dashboard:     'admin-app',
+              Teachers:      'admin-app/teachers',
+              Schools:       'admin-app/schools',
+              Notifications: 'admin-app/notifications',
+            },
+          },
+          ManageTeachers:    'admin-app/manage-teachers',
+          ManageSchools:     'admin-app/manage-schools',
+          TeacherVerification:'admin-app/verification/:teacherId',
+        },
+      },
+    },
+  },
+};
+
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { error: Error | null }
@@ -67,7 +155,10 @@ export default function App() {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <PaperProvider theme={theme}>
-              <NavigationContainer documentTitle={{ formatter: () => appTitle }}>
+              <NavigationContainer
+                linking={linking}
+                documentTitle={{ formatter: () => appTitle }}
+              >
                 <StatusBar style="light" />
                 <AppNavigator appType={appType} />
               </NavigationContainer>
