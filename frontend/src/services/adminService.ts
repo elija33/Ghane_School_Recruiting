@@ -1,5 +1,6 @@
 import api from './api';
 import {
+  JobListing,
   Page,
   SchoolProfile,
   TeacherProfile,
@@ -47,6 +48,11 @@ export const adminService = {
 
   async getSchoolById(schoolId: string): Promise<SchoolProfile> {
     const { data } = await api.get<SchoolProfile>(`/admin/schools/${schoolId}`);
+    return data;
+  },
+
+  async getSchoolJobs(schoolId: string): Promise<JobListing[]> {
+    const { data } = await api.get<JobListing[]>(`/admin/schools/${schoolId}/jobs`);
     return data;
   },
 

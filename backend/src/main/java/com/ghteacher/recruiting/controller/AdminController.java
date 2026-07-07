@@ -3,6 +3,7 @@ package com.ghteacher.recruiting.controller;
 import com.ghteacher.recruiting.dto.request.CreateAdminRequest;
 import com.ghteacher.recruiting.dto.response.AdminAnalyticsResponse;
 import com.ghteacher.recruiting.dto.response.AdminUserResponse;
+import com.ghteacher.recruiting.dto.response.JobListingResponse;
 import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
 import com.ghteacher.recruiting.enums.VerificationStatus;
@@ -57,6 +58,11 @@ public class AdminController {
     @GetMapping("/schools/{schoolId}")
     public ResponseEntity<SchoolProfileResponse> getSchoolById(@PathVariable UUID schoolId) {
         return ResponseEntity.ok(adminService.getSchoolById(schoolId));
+    }
+
+    @GetMapping("/schools/{schoolId}/jobs")
+    public ResponseEntity<List<JobListingResponse>> getSchoolJobs(@PathVariable UUID schoolId) {
+        return ResponseEntity.ok(adminService.getSchoolJobs(schoolId));
     }
 
     @PutMapping("/schools/{schoolId}/approve")

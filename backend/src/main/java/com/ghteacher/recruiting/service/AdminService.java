@@ -3,8 +3,10 @@ package com.ghteacher.recruiting.service;
 import com.ghteacher.recruiting.dto.request.CreateAdminRequest;
 import com.ghteacher.recruiting.dto.response.AdminAnalyticsResponse;
 import com.ghteacher.recruiting.dto.response.AdminUserResponse;
+import com.ghteacher.recruiting.dto.response.JobListingResponse;
 import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
+import com.ghteacher.recruiting.entity.JobListing;
 import com.ghteacher.recruiting.entity.TeacherProfile;
 import com.ghteacher.recruiting.entity.User;
 import com.ghteacher.recruiting.entity.School;
@@ -16,6 +18,9 @@ import com.ghteacher.recruiting.exception.BusinessException;
 import com.ghteacher.recruiting.exception.DuplicateResourceException;
 import com.ghteacher.recruiting.exception.ResourceNotFoundException;
 import com.ghteacher.recruiting.repository.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +47,10 @@ public class AdminService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username:noreply@ghteacher.com}")
+    private String fromEmail;
 
     @Transactional(readOnly = true)
     public Page<TeacherProfileResponse> getAllTeachers(VerificationStatus status, int page, int size) {
@@ -101,6 +110,14 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    public List<JobListingResponse> getSchoolJobs(UUID schoolId) {
+        return jobListingRepository.findBySchoolId(schoolId)
+                .stream()
+                .map(this::toJobListingResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public SchoolProfileResponse getSchoolById(UUID id) {
         School school = schoolRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
@@ -112,8 +129,10 @@ public class AdminService {
         School school = schoolRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
         school.setRegistrationStatus(RegistrationStatus.APPROVED);
+        School saved = schoolRepository.save(school);
         log.info("Admin approved school registration: {}", id);
-        return toSchoolProfileResponse(schoolRepository.save(school));
+        sendApprovalEmail(saved);
+        return toSchoolProfileResponse(saved);
     }
 
     @Transactional
@@ -174,6 +193,52 @@ public class AdminService {
         }
         userRepository.delete(user);
         log.info("Admin account removed: {}", user.getEmail());
+    }
+
+    private JobListingResponse toJobListingResponse(JobListing j) {
+        return JobListingResponse.builder()
+                .id(j.getId())
+                .schoolId(j.getSchool().getId())
+                .schoolName(j.getSchool().getSchoolName())
+                .title(j.getTitle())
+                .subject(j.getSubject())
+                .location(j.getLocation())
+                .description(j.getDescription())
+                .requirements(j.getRequirements())
+                .isActive(j.isActive())
+                .createdAt(j.getCreatedAt())
+                .expiresAt(j.getExpiresAt())
+                .screeningQuestions(j.getScreeningQuestions().stream()
+                        .map(q -> JobListingResponse.ScreeningQuestionResponse.builder()
+                                .id(q.getId())
+                                .questionText(q.getQuestionText())
+                                .questionOrder(q.getQuestionOrder())
+                                .isRequired(q.isRequired())
+                                .build())
+                        .toList())
+                .build();
+    }
+
+    private void sendApprovalEmail(School school) {
+        String email = school.getUser().getEmail();
+        String name = school.getSchoolName() != null ? school.getSchoolName() : "School";
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(email);
+            message.setSubject("Account Approved – GH Teacher Recruiting");
+            message.setText(
+                    "Hello " + name + ",\n\n" +
+                    "Your account has been created successfully. " +
+                    "You can now log in and start posting jobs on GH Teacher Recruiting.\n\n" +
+                    "Welcome aboard!\n\n" +
+                    "The GH Teacher Recruiting Team"
+            );
+            mailSender.send(message);
+            log.info("Approval email sent to {}", email);
+        } catch (Exception e) {
+            log.warn("Failed to send approval email to {} ({})", email, e.getMessage());
+        }
     }
 
     private SchoolProfileResponse toSchoolProfileResponse(School s) {

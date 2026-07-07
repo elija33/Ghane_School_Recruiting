@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 import { Button, Card, Chip, Searchbar, Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -47,7 +48,7 @@ export default function ManageSchoolsScreen({ navigation }: Props) {
     }
   };
 
-  useEffect(() => { loadSchools(true); }, []);
+  useFocusEffect(useCallback(() => { loadSchools(true); }, []));
 
   const filtered = search
     ? schools.filter((s) =>

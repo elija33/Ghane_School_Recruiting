@@ -266,7 +266,7 @@ export default function OnboardingScreen() {
 
             {/* Admin access */}
             <TouchableOpacity
-              onPress={() => navigation.navigate("AdminDashboard")}
+              onPress={() => navigation.navigate("AdminLogin")}
               style={{ alignItems: "center", paddingBottom: 16 }}
             >
               <Text style={{ fontSize: 12, color: "#aaa" }}>Admin Access</Text>

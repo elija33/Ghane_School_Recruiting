@@ -60,6 +60,17 @@ const styles = StyleSheet.create({
     borderLeftColor: '#27AE60',
   },
   successText: { color: '#1E8449', fontSize: 14, fontWeight: '500' },
+  jobRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2F3F4',
+  },
+  jobTitle: { fontSize: 14, fontWeight: '600', color: '#2C3E50' },
+  jobMeta: { fontSize: 12, color: '#7F8C8D' },
+  jobDate: { fontSize: 11, color: '#BDC3C7', marginTop: 4 },
 });
 
 export default styles;

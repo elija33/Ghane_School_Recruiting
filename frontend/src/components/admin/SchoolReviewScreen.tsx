@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Card, Text, TextInput } from 'react-native-paper';
+import { Card, Chip, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { format } from 'date-fns';
 import { adminService } from '../../services/adminService';
-import { RootStackParamList, SchoolProfile, RegistrationStatus } from '../../types';
+import { JobListing, RegistrationStatus, RootStackParamList, SchoolProfile } from '../../types';
 import { extractErrorMessage } from '../../services/api';
 import styles from './style/SchoolReviewScreen.styles';
 
@@ -25,6 +25,7 @@ export default function SchoolReviewScreen({ navigation, route }: Props) {
   const { schoolId } = route.params;
 
   const [school, setSchool] = useState<SchoolProfile | null>(null);
+  const [jobs, setJobs] = useState<JobListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -32,8 +33,14 @@ export default function SchoolReviewScreen({ navigation, route }: Props) {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    adminService.getSchoolById(schoolId)
-      .then(setSchool)
+    Promise.all([
+      adminService.getSchoolById(schoolId),
+      adminService.getSchoolJobs(schoolId),
+    ])
+      .then(([schoolData, jobsData]) => {
+        setSchool(schoolData);
+        setJobs(jobsData);
+      })
       .catch((e) => setError(extractErrorMessage(e)))
       .finally(() => setLoading(false));
   }, [schoolId]);
@@ -103,6 +110,7 @@ export default function SchoolReviewScreen({ navigation, route }: Props) {
 
         {school && (
           <>
+            {/* School Details */}
             <Card style={styles.section}>
               <Card.Content>
                 <Text style={styles.sectionTitle}>School Details</Text>
@@ -147,6 +155,56 @@ export default function SchoolReviewScreen({ navigation, route }: Props) {
               </Card.Content>
             </Card>
 
+            {/* Job Listings — hidden for rejected schools */}
+            {school.registrationStatus !== 'REJECTED' && <Card style={styles.section}>
+              <Card.Content>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <Text style={styles.sectionTitle}>Job Postings</Text>
+                  <Text style={{ fontSize: 13, color: '#7F8C8D' }}>{jobs.length} total</Text>
+                </View>
+
+                {jobs.length === 0 ? (
+                  <View style={{ alignItems: 'center', paddingVertical: 20, gap: 6 }}>
+                    <Ionicons name="briefcase-outline" size={36} color="#D5D8DC" />
+                    <Text style={{ color: '#BDC3C7', fontSize: 14 }}>No jobs posted yet</Text>
+                  </View>
+                ) : (
+                  jobs.map((job) => (
+                    <View key={job.id} style={styles.jobRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.jobTitle}>{job.title}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 3 }}>
+                          {job.subject ? (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                              <Ionicons name="book-outline" size={12} color="#7F8C8D" />
+                              <Text style={styles.jobMeta}>{job.subject}</Text>
+                            </View>
+                          ) : null}
+                          {job.location ? (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                              <Ionicons name="location-outline" size={12} color="#7F8C8D" />
+                              <Text style={styles.jobMeta}>{job.location}</Text>
+                            </View>
+                          ) : null}
+                        </View>
+                        <Text style={styles.jobDate}>
+                          Posted {format(new Date(job.createdAt), 'MMM d, yyyy')}
+                        </Text>
+                      </View>
+                      <Chip
+                        compact
+                        style={{ backgroundColor: job.isActive ? '#EAFAF1' : '#F2F3F4' }}
+                        textStyle={{ color: job.isActive ? '#27AE60' : '#7F8C8D', fontSize: 11, fontWeight: '600' }}
+                      >
+                        {job.isActive ? 'Active' : 'Closed'}
+                      </Chip>
+                    </View>
+                  ))
+                )}
+              </Card.Content>
+            </Card>}
+
+            {/* Decision */}
             <Card style={styles.section}>
               <Card.Content>
                 <Text style={styles.sectionTitle}>Decision</Text>
