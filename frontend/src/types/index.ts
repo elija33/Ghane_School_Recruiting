@@ -98,6 +98,8 @@ export interface TeacherProfileRequest {
 // School Profile
 // ---------------------------------------------------------------
 
+export type RegistrationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface SchoolProfile {
   id: string;
   userId: string;
@@ -110,6 +112,7 @@ export interface SchoolProfile {
   subscriptionStart: string | null;
   subscriptionEnd: string | null;
   isSubscriptionActive: boolean;
+  registrationStatus: RegistrationStatus;
   createdAt: string;
 }
 
@@ -283,6 +286,7 @@ export type RootStackParamList = {
   AdminLogin: undefined;
   AdminDashboard: undefined;
   ManageSchools: undefined;
+  SchoolReview: { schoolId: string };
   ManageTeachers: undefined;
   VerifiedTeachers: undefined;
   PendingDocumentReview: undefined;
@@ -330,5 +334,6 @@ export type AdminStackParamList = {
   ManageTeachers: undefined;
   TeacherVerification: { teacherId: string };
   ManageSchools: undefined;
+  SchoolReview: { schoolId: string };
   Notifications: undefined;
 };

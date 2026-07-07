@@ -8,6 +8,7 @@ import com.ghteacher.recruiting.dto.response.JobListingResponse;
 import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
 import com.ghteacher.recruiting.entity.*;
+import com.ghteacher.recruiting.enums.RegistrationStatus;
 import com.ghteacher.recruiting.enums.VerificationStatus;
 import com.ghteacher.recruiting.exception.BusinessException;
 import com.ghteacher.recruiting.exception.DuplicateResourceException;
@@ -266,6 +267,7 @@ public class SchoolService {
                 .subscriptionStart(s.getSubscriptionStart())
                 .subscriptionEnd(s.getSubscriptionEnd())
                 .isSubscriptionActive(s.isSubscriptionActive())
+                .registrationStatus(s.getRegistrationStatus() != null ? s.getRegistrationStatus() : RegistrationStatus.PENDING)
                 .createdAt(s.getCreatedAt())
                 .build();
     }

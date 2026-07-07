@@ -1,5 +1,6 @@
 package com.ghteacher.recruiting.entity;
 
+import com.ghteacher.recruiting.enums.RegistrationStatus;
 import com.ghteacher.recruiting.enums.SubscriptionTier;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,6 +52,11 @@ public class School {
     @Column(name = "is_subscription_active", nullable = false)
     @Builder.Default
     private boolean isSubscriptionActive = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "registration_status", columnDefinition = "varchar(20) default 'PENDING'")
+    @Builder.Default
+    private RegistrationStatus registrationStatus = RegistrationStatus.PENDING;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default

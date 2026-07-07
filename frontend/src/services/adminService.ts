@@ -45,6 +45,23 @@ export const adminService = {
     return data;
   },
 
+  async getSchoolById(schoolId: string): Promise<SchoolProfile> {
+    const { data } = await api.get<SchoolProfile>(`/admin/schools/${schoolId}`);
+    return data;
+  },
+
+  async approveSchool(schoolId: string): Promise<SchoolProfile> {
+    const { data } = await api.put<SchoolProfile>(`/admin/schools/${schoolId}/approve`);
+    return data;
+  },
+
+  async rejectSchool(schoolId: string, reason?: string): Promise<SchoolProfile> {
+    const { data } = await api.put<SchoolProfile>(`/admin/schools/${schoolId}/reject`, null, {
+      params: { reason },
+    });
+    return data;
+  },
+
   async getAnalytics(): Promise<AdminAnalytics> {
     const { data } = await api.get<AdminAnalytics>('/admin/analytics');
     return data;

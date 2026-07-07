@@ -1,5 +1,6 @@
 package com.ghteacher.recruiting.dto.response;
 
+import com.ghteacher.recruiting.enums.RegistrationStatus;
 import com.ghteacher.recruiting.enums.SubscriptionTier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +27,6 @@ public class SchoolProfileResponse {
     private Instant subscriptionStart;
     private Instant subscriptionEnd;
     private boolean isSubscriptionActive;
+    private RegistrationStatus registrationStatus;
     private Instant createdAt;
 }

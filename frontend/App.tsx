@@ -60,6 +60,7 @@ const linking: any = {
       // ── Admin bypass (no auth required) ─────────────────────────
       AdminDashboard:        'admin',
       ManageSchools:         'admin/schools',
+      SchoolReview:          'admin/schools/:schoolId',
       ManageTeachers:        'admin/teachers',
       VerifiedTeachers:      'admin/teachers/verified',
       PendingDocumentReview: 'admin/teachers/pending',

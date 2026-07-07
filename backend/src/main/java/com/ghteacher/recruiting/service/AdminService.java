@@ -7,6 +7,8 @@ import com.ghteacher.recruiting.dto.response.SchoolProfileResponse;
 import com.ghteacher.recruiting.dto.response.TeacherProfileResponse;
 import com.ghteacher.recruiting.entity.TeacherProfile;
 import com.ghteacher.recruiting.entity.User;
+import com.ghteacher.recruiting.entity.School;
+import com.ghteacher.recruiting.enums.RegistrationStatus;
 import com.ghteacher.recruiting.enums.SubscriptionStatus;
 import com.ghteacher.recruiting.enums.UserRole;
 import com.ghteacher.recruiting.enums.VerificationStatus;
@@ -95,21 +97,32 @@ public class AdminService {
     @Transactional(readOnly = true)
     public Page<SchoolProfileResponse> getAllSchools(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return schoolRepository.findAllBy(pageable)
-                .map(s -> SchoolProfileResponse.builder()
-                        .id(s.getId())
-                        .userId(s.getUser().getId())
-                        .email(s.getUser().getEmail())
-                        .schoolName(s.getSchoolName())
-                        .location(s.getLocation())
-                        .contactPerson(s.getContactPerson())
-                        .phoneNumber(s.getPhoneNumber())
-                        .subscriptionTier(s.getSubscriptionTier())
-                        .subscriptionStart(s.getSubscriptionStart())
-                        .subscriptionEnd(s.getSubscriptionEnd())
-                        .isSubscriptionActive(s.isSubscriptionActive())
-                        .createdAt(s.getCreatedAt())
-                        .build());
+        return schoolRepository.findAllBy(pageable).map(this::toSchoolProfileResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public SchoolProfileResponse getSchoolById(UUID id) {
+        School school = schoolRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+        return toSchoolProfileResponse(school);
+    }
+
+    @Transactional
+    public SchoolProfileResponse approveSchool(UUID id) {
+        School school = schoolRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+        school.setRegistrationStatus(RegistrationStatus.APPROVED);
+        log.info("Admin approved school registration: {}", id);
+        return toSchoolProfileResponse(schoolRepository.save(school));
+    }
+
+    @Transactional
+    public SchoolProfileResponse rejectSchool(UUID id, String reason) {
+        School school = schoolRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+        school.setRegistrationStatus(RegistrationStatus.REJECTED);
+        log.info("Admin rejected school registration: {} - reason: {}", id, reason);
+        return toSchoolProfileResponse(schoolRepository.save(school));
     }
 
     @Transactional(readOnly = true)
@@ -161,6 +174,24 @@ public class AdminService {
         }
         userRepository.delete(user);
         log.info("Admin account removed: {}", user.getEmail());
+    }
+
+    private SchoolProfileResponse toSchoolProfileResponse(School s) {
+        return SchoolProfileResponse.builder()
+                .id(s.getId())
+                .userId(s.getUser().getId())
+                .email(s.getUser().getEmail())
+                .schoolName(s.getSchoolName())
+                .location(s.getLocation())
+                .contactPerson(s.getContactPerson())
+                .phoneNumber(s.getPhoneNumber())
+                .subscriptionTier(s.getSubscriptionTier())
+                .subscriptionStart(s.getSubscriptionStart())
+                .subscriptionEnd(s.getSubscriptionEnd())
+                .isSubscriptionActive(s.isSubscriptionActive())
+                .registrationStatus(s.getRegistrationStatus() != null ? s.getRegistrationStatus() : RegistrationStatus.PENDING)
+                .createdAt(s.getCreatedAt())
+                .build();
     }
 
     private AdminUserResponse toAdminUserResponse(User u) {

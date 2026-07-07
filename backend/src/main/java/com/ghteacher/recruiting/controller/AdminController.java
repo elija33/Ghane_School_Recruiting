@@ -54,6 +54,24 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAllSchools(page, size));
     }
 
+    @GetMapping("/schools/{schoolId}")
+    public ResponseEntity<SchoolProfileResponse> getSchoolById(@PathVariable UUID schoolId) {
+        return ResponseEntity.ok(adminService.getSchoolById(schoolId));
+    }
+
+    @PutMapping("/schools/{schoolId}/approve")
+    public ResponseEntity<SchoolProfileResponse> approveSchool(@PathVariable UUID schoolId) {
+        return ResponseEntity.ok(adminService.approveSchool(schoolId));
+    }
+
+    @PutMapping("/schools/{schoolId}/reject")
+    public ResponseEntity<SchoolProfileResponse> rejectSchool(
+            @PathVariable UUID schoolId,
+            @RequestParam(required = false) String reason) {
+
+        return ResponseEntity.ok(adminService.rejectSchool(schoolId, reason));
+    }
+
     @GetMapping("/analytics")
     public ResponseEntity<AdminAnalyticsResponse> getAnalytics() {
         return ResponseEntity.ok(adminService.getAnalytics());
