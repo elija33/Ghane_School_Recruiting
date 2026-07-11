@@ -156,6 +156,13 @@ function SchoolRegisterScreen() {
       const result = await dispatch(
         registerUser({ email: email.trim().toLowerCase(), password, role: "SCHOOL" as UserRole }),
       );
+      if (registerUser.rejected.match(result)) {
+        const msg = result.payload as string;
+        if (msg?.toLowerCase().includes("email") && msg?.toLowerCase().includes("already")) {
+          setFieldErrors((prev) => ({ ...prev, email: "This email is already registered. Please sign in." }));
+        }
+        return;
+      }
       if (!registerUser.fulfilled.match(result)) return;
       await dispatch(createSchoolProfile({ schoolName: schoolName.trim(), location: schoolLocation.trim() }));
       setWelcomeVisible(true);
@@ -186,7 +193,7 @@ function SchoolRegisterScreen() {
             </Text>
             <Button
               mode="contained"
-              onPress={() => setWelcomeVisible(false)}
+              onPress={() => { setWelcomeVisible(false); navigation.navigate('Login'); }}
               buttonColor={primaryColor}
               style={{ borderRadius: 10, width: "100%" }}
               contentStyle={{ paddingVertical: 6 }}
@@ -347,6 +354,7 @@ function TeacherRegisterScreen() {
   const [day, setDay] = useState("");
   const [year, setYear] = useState("");
   const [gender, setGender] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -372,9 +380,9 @@ function TeacherRegisterScreen() {
       if (age < 21) errors.birthday = "You must be at least 21 years old to register";
     }
     if (!gender) errors.gender = "Please select your gender";
-    if (!email.trim()) errors.email = "Mobile number or email is required";
-    else if (email.includes("@") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      errors.email = "Invalid email address";
+    if (!phone.trim()) errors.phone = "Mobile number is required";
+    if (!email.trim()) errors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Enter a valid email address";
     if (!password) errors.password = "Password is required";
     else if (password.length < 8) errors.password = "Password must be at least 8 characters";
     if (!confirmPassword) errors.confirmPassword = "Please confirm your password";
@@ -392,6 +400,11 @@ function TeacherRegisterScreen() {
     );
     if (registerUser.fulfilled.match(result)) {
       setWelcomeVisible(true);
+    } else if (registerUser.rejected.match(result)) {
+      const msg = result.payload as string;
+      if (msg?.toLowerCase().includes("email") && msg?.toLowerCase().includes("already")) {
+        setFieldErrors((prev) => ({ ...prev, email: "This email is already registered. Please sign in." }));
+      }
     }
   };
 
@@ -414,7 +427,7 @@ function TeacherRegisterScreen() {
             <Text style={{ fontSize: 13, color: "#888", textAlign: "center", marginBottom: 24 }}>
               Your username: <Text style={{ fontWeight: "700", color: primaryColor }}>{firstName.trim().toLowerCase()}{lastName.trim().toLowerCase()}</Text>
             </Text>
-            <Button mode="contained" onPress={() => setWelcomeVisible(false)} buttonColor={primaryColor} style={{ borderRadius: 10, width: "100%" }} contentStyle={{ paddingVertical: 6 }}>
+            <Button mode="contained" onPress={() => { setWelcomeVisible(false); navigation.navigate('TeacherLogin'); }} buttonColor={primaryColor} style={{ borderRadius: 10, width: "100%" }} contentStyle={{ paddingVertical: 6 }}>
               Get Started
             </Button>
           </TouchableOpacity>
@@ -465,8 +478,12 @@ function TeacherRegisterScreen() {
               <NativeSelect value={gender} onChange={setGender} options={GENDERS} placeholder="Select your gender" />
               <HelperText type="error" visible={!!fieldErrors.gender}>{fieldErrors.gender}</HelperText>
 
-              <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A1A1A", marginTop: 8, marginBottom: 4 }}>Mobile number or email</Text>
-              <TextInput placeholder="Mobile number or email" value={email} onChangeText={setEmail} mode="outlined" keyboardType="email-address" autoCapitalize="none" style={{ backgroundColor: "#fff" }} error={!!fieldErrors.email} activeOutlineColor={primaryColor} outlineColor="#ccc" />
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A1A1A", marginTop: 8, marginBottom: 4 }}>Mobile Number</Text>
+              <TextInput placeholder="Enter mobile number" value={phone} onChangeText={setPhone} mode="outlined" keyboardType="phone-pad" style={{ backgroundColor: "#fff" }} error={!!fieldErrors.phone} activeOutlineColor={primaryColor} outlineColor="#ccc" left={<TextInput.Icon icon="phone-outline" />} />
+              <HelperText type="error" visible={!!fieldErrors.phone}>{fieldErrors.phone}</HelperText>
+
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A1A1A", marginTop: 8, marginBottom: 4 }}>Email</Text>
+              <TextInput placeholder="Enter email address" value={email} onChangeText={setEmail} mode="outlined" keyboardType="email-address" autoCapitalize="none" style={{ backgroundColor: "#fff" }} error={!!fieldErrors.email} activeOutlineColor={primaryColor} outlineColor="#ccc" left={<TextInput.Icon icon="email-outline" />} />
               <Text style={{ fontSize: 11, color: "#606770", marginTop: 4 }}>
                 You may receive notifications from us.{" "}
                 <Text style={{ color: primaryColor }}>Learn why we ask for your contact information</Text>

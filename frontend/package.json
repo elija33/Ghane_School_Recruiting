@@ -14,7 +14,9 @@
     "school": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start",
     "school:ios": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start --ios",
     "school:android": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start --android",
-    "school:web": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start --web"
+    "school:web": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start --web",
+    "teacher:web:8081": "APP_TYPE=teacher EXPO_PUBLIC_APP_TYPE=teacher expo start --web --port 8081",
+    "school:web:8082": "APP_TYPE=school EXPO_PUBLIC_APP_TYPE=school expo start --web --port 8082"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

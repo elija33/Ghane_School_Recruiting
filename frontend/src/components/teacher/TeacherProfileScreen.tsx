@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../../store';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types';
 
@@ -30,7 +31,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function TeacherProfileScreen() {
   const navigation = useNavigation<Nav>();
-  const [form, setForm] = useState<FormData>(initialForm);
+  const authEmail = useAppSelector((s) => s.auth.email);
+  const [form, setForm] = useState<FormData>({ ...initialForm, email: authEmail ?? '' });
   const [errors, setErrors] = useState<FormErrors>({});
   const [saved, setSaved] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -45,6 +47,12 @@ export default function TeacherProfileScreen() {
   const [subjectsLoading, setSubjectsLoading] = useState(true);
   const [regions, setRegions] = useState<string[]>([]);
   const [regionsLoading, setRegionsLoading] = useState(true);
+
+  useEffect(() => {
+    if (authEmail && !form.email) {
+      setForm((f) => ({ ...f, email: authEmail }));
+    }
+  }, [authEmail]);
 
   useEffect(() => {
     adminService.getSubjects()

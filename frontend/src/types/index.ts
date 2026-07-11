@@ -33,6 +33,7 @@ export interface AuthResponse {
   role: UserRole;
   profileComplete: boolean;
   userId: string;
+  email: string;
 }
 
 export interface RegisterRequest {

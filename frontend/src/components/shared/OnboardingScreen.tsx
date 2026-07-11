@@ -24,6 +24,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const PRIMARY = "#1B4F72";
 const GREEN = "#4CAF50";
+const isSchoolApp = process.env.EXPO_PUBLIC_APP_TYPE === "school";
 
 export default function OnboardingScreen() {
   const navigation = useNavigation<Nav>();
@@ -96,7 +97,7 @@ export default function OnboardingScreen() {
               marginBottom: 12,
             }}
           >
-            Find Teachers in Ghana
+            {isSchoolApp ? "Find Teachers in Ghana" : "Find Teaching Job in Ghana"}
           </Text>
           <Text
             style={{

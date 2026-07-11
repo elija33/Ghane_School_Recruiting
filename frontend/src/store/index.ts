@@ -20,7 +20,7 @@ import notificationReducer from './slices/notificationSlice';
 const authPersistConfig = {
   key: 'auth',
   storage: AsyncStorage,
-  whitelist: ['accessToken', 'refreshToken', 'role', 'userId', 'profileComplete', 'isAuthenticated'],
+  whitelist: ['accessToken', 'refreshToken', 'role', 'userId', 'email', 'profileComplete', 'isAuthenticated'],
 };
 
 const rootReducer = combineReducers({

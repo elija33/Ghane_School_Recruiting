@@ -8,6 +8,7 @@ interface AuthState {
   refreshToken: string | null;
   role: UserRole | null;
   userId: string | null;
+  email: string | null;
   profileComplete: boolean;
   isAuthenticated: boolean;
   loading: boolean;
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   refreshToken: null,
   role: null,
   userId: null,
+  email: null,
   profileComplete: false,
   isAuthenticated: false,
   loading: false,
@@ -71,6 +73,7 @@ const authSlice = createSlice({
       state.refreshToken = response.refreshToken;
       state.role = response.role;
       state.userId = response.userId;
+      state.email = response.email;
       state.profileComplete = response.profileComplete;
       state.isAuthenticated = true;
       state.loading = false;
