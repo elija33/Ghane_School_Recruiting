@@ -39,9 +39,11 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String normalizedEmail = request.getEmail().toLowerCase().trim();
+
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new DuplicateResourceException(
-                    "Email already registered: " + request.getEmail());
+                    "This email is already registered. Please sign in or use a different email.");
         }
 
         if (request.getRole() == UserRole.ADMIN) {
@@ -49,7 +51,7 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .email(request.getEmail().toLowerCase().trim())
+                .email(normalizedEmail)
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
@@ -68,6 +70,7 @@ public class AuthService {
                 .role(user.getRole())
                 .profileComplete(false)
                 .userId(user.getId().toString())
+                .email(user.getEmail())
                 .build();
     }
 
@@ -99,6 +102,7 @@ public class AuthService {
                 .role(user.getRole())
                 .profileComplete(profileComplete)
                 .userId(user.getId().toString())
+                .email(user.getEmail())
                 .build();
     }
 
@@ -123,6 +127,7 @@ public class AuthService {
                 .role(user.getRole())
                 .profileComplete(isProfileComplete(user))
                 .userId(user.getId().toString())
+                .email(user.getEmail())
                 .build();
     }
 

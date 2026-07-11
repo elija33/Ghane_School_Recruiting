@@ -18,4 +18,5 @@ public class AuthResponse {
     private UserRole role;
     private boolean profileComplete;
     private String userId;
+    private String email;
 }
