@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { registerUser } from "../../store/slices/authSlice";
+import { registerUser, logoutUser } from "../../store/slices/authSlice";
 import { createSchoolProfile } from "../../store/slices/schoolSlice";
 import { RootStackParamList, UserRole } from "../../types";
 import styles from "./style/RegisterScreen.styles";
@@ -193,7 +193,7 @@ function SchoolRegisterScreen() {
             </Text>
             <Button
               mode="contained"
-              onPress={() => { setWelcomeVisible(false); navigation.navigate('Login'); }}
+              onPress={async () => { setWelcomeVisible(false); await dispatch(logoutUser()); navigation.reset({ index: 0, routes: [{ name: 'Onboarding' }] }); }}
               buttonColor={primaryColor}
               style={{ borderRadius: 10, width: "100%" }}
               contentStyle={{ paddingVertical: 6 }}
@@ -326,7 +326,7 @@ function SchoolRegisterScreen() {
 
               <Button
                 mode="outlined"
-                onPress={() => navigation.navigate("Onboarding")}
+                onPress={async () => { await dispatch(logoutUser()); navigation.reset({ index: 0, routes: [{ name: 'Onboarding' }] }); }}
                 style={{ borderRadius: 8, borderColor: "#ccc" }}
                 contentStyle={{ paddingVertical: 6 }}
                 textColor="#555"
