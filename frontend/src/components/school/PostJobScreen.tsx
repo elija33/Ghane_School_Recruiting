@@ -94,7 +94,7 @@ export default function PostJobScreen() {
         location,
         description,
         requirements: requirements || undefined,
-        expiresAt: expiresAt || undefined,
+        expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
         screeningQuestions: screeningQuestions.map((q) => ({
           questionText: q.questionText,
           questionOrder: q.questionOrder,
@@ -103,7 +103,7 @@ export default function PostJobScreen() {
       })).unwrap();
       setSuccess(true);
     } catch (e) {
-      setSubmitError(extractErrorMessage(e));
+      setSubmitError(typeof e === 'string' ? e : extractErrorMessage(e));
     } finally {
       setSubmitting(false);
     }
@@ -125,7 +125,18 @@ export default function PostJobScreen() {
         >
           View My Jobs
         </Button>
-        <Button mode="text" onPress={() => navigation.goBack()} textColor="#7F8C8D">
+        <Button mode="text" onPress={() => {
+          setTitle('');
+          setSubject('');
+          setLocation('');
+          setDescription('');
+          setRequirements('');
+          setExpiresAt('');
+          setScreeningQuestions([]);
+          setErrors({});
+          setSubmitError('');
+          setSuccess(false);
+        }} textColor="#7F8C8D">
           Post Another Job
         </Button>
       </View>

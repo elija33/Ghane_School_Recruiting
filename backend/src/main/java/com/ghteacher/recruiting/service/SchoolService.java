@@ -81,7 +81,6 @@ public class SchoolService {
     @Transactional
     public JobListingResponse createJob(String email, JobListingRequest request) {
         School school = getSchoolByEmail(email);
-        requireActiveSubscription(school);
 
         JobListing job = JobListing.builder()
                 .school(school)
